@@ -13,15 +13,15 @@ $(function() {
 		jQuery.getJSON('https://api.twitch.tv/kraken/streams?callback=?', {
 			game: game.name 
 		}, function(data) {
-			$('<th/>', {
-				rowspan: data.streams.length + 1
-			}).append($('<img/>', {
-				src: 'https://static-cdn.jtvnw.net/ttv-boxart/' + encodeURI(game.name) + '-52x72.jpg',
-				width: 52,
-				height: 72
-			})).prependTo(header);
-			
 			if (data.streams.length > 0) {
+				$('<th/>', {
+					rowspan: data.streams.length + 1
+				}).append($('<img/>', {
+					src: 'https://static-cdn.jtvnw.net/ttv-boxart/' + encodeURI(game.name) + '-52x72.jpg',
+					width: 52,
+					height: 72
+				})).prependTo(header);
+				
 				data.streams.sort(function(a, b) { return a.viewers - b.viewers; });
 				header.show();
 				for (var i = 0; i < data.streams.length; i++) {
