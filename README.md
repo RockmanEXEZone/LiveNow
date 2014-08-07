@@ -1,7 +1,7 @@
 Live Now
 ========
 
-Live Now is a web application written in jQuery that queries the Twitch.tv API and displays all live streams of Mega Man Battle Network or Mega Man Star Force games. All Twitch API requests are made from the user's browser, which also prevents abuse.
+Live Now is a web application written in jQuery that queries the Twitch and Hitbox APIs and displays all live streams of Mega Man Battle Network or Mega Man Star Force games. All API requests are made from the user's browser, which also prevents abuse.
 
 Live demo
 ---------
