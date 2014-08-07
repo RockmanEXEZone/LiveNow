@@ -85,9 +85,7 @@ $(function() {
 				$('<th/>', {
 					rowspan: gameStreams.length + 1
 				}).append($('<img/>', {
-					src: 'https://static-cdn.jtvnw.net/ttv-boxart/' + encodeURI(game.name) + '-52x72.jpg',
-					width: 52,
-					height: 72
+					src: game.boxart || 'https://static-cdn.jtvnw.net/ttv-boxart/' + encodeURI(game.name) + '-52x72.jpg',
 				})).prependTo(header);
 			
 				gameStreams.sort(function(a, b) { return a.viewers - b.viewers; });
@@ -125,7 +123,7 @@ $(function() {
 						// Platform cell
 						$('<td/>').append(
 							$('<img/>', {
-								src: 'logo-' + stream.platform + '.png',
+								src: 'logo/' + stream.platform + '.png',
 								width: 50,
 								height: 50
 							}).css('border', 'none')

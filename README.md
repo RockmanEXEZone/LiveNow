@@ -9,29 +9,45 @@ A live demo of the application can be found at http://www.therockmanexezone.com/
 
 Usage
 -----
-To embed Live Now on a web page, first make sure jQuery is loaded. Declare a *livenow_games* variable in a script tag, containing the Twitch IDs and names of the games that you want to query.
+To embed Live Now on a web page, copy *livenow.js*, *livenow.css* and the *logo* directory to your web server. Make sure jQuery is included in the web page you want to embed Live Now on. Declare a *livenow_games* variable in a script tag, containing the Twitch IDs and Twitch names of the games that you want to query. To load specific from Hitbox as well, supply the Hitbox game IDs; otherwise, leave it out or set it to 0. You can also supply an URL to the game's boxart; if none is specified, game artwork will be loaded from Twitch.
 
 Then embed the JavaScript file and container, optionally specifying the width, as shown in the example below:
 ```
 <script type="text/javascript">
     var livenow_games = [
-        { id:   7542, name: 'Mega Man Battle Network' },
-        { id:  24465, name: 'Rockman EXE Operate Shooting Star' },
-        { id:   4682, name: 'Mega Man Battle Network 2' },
-        { id:  12105, name: 'Mega Man Battle Network 3' },
-        { id:   3108, name: 'Mega Man Battle Network 4' },
-        { id:  10763, name: 'Rockman EXE 4.5 Real Operation' },
-        { id:  11522, name: 'Mega Man Battle Network 5' },
-        { id:   9009, name: 'Mega Man Battle Network 5: Double Team DS' },
-        { id:   7325, name: 'Mega Man Battle Network 6' },
-        { id:  17587, name: 'Mega Man Battle Chip Challenge' },
-        { id:   5831, name: 'Mega Man Network Transmission' },
-        { id:  22528, name: 'Rockman EXE WS' },
-        { id:   1350, name: 'Mega Man Star Force' },
-        { id:  18770, name: 'Mega Man Star Force 2' },
-        { id:  19495, name: 'Mega Man Star Force 3' },
-        { id: 416185, name: 'Mega Man Battle Network Chrono X' },
-    ];
+        { id:   7542, hitbox:  7705, name: 'Mega Man Battle Network',
+            boxart: 'box/bn1.png' },
+        { id:  24465, hitbox: 21710, name: 'Rockman EXE Operate Shooting Star',
+            boxart: 'box/exeoss.png' },
+        { id:   4682, hitbox:  5312, name: 'Mega Man Battle Network 2',
+            boxart: 'box/bn2.png' },
+        { id:  12105, hitbox: 11480, name: 'Mega Man Battle Network 3',
+            boxart: 'box/bn3.png' },
+        { id:   3108, hitbox:  4021, name: 'Mega Man Battle Network 4',
+            boxart: 'box/bn4.png' },
+        { id:  10763, hitbox: 10393, name: 'Rockman EXE 4.5 Real Operation',
+            boxart: 'box/exe45.png' },
+        { id:  11522, hitbox: 10999, name: 'Mega Man Battle Network 5',
+            boxart: 'box/bn5.png' },
+        { id:   9009, hitbox:  8916, name: 'Mega Man Battle Network 5: Double Team DS',
+            boxart: 'box/bn5ds.png' },
+        { id:   7325, hitbox:  7535, name: 'Mega Man Battle Network 6',
+            boxart: 'box/bn6.png' },
+        { id:  17587, hitbox: 15975, name: 'Mega Man Battle Chip Challenge',
+            boxart: 'box/bcc.png' },
+        { id:   5831, hitbox:     0, name: 'Mega Man Network Transmission',
+            boxart: 'box/nt.png' },
+        { id:  22528, hitbox:     0, name: 'Rockman EXE WS',
+            boxart: 'box/exews.png' },
+        { id:   1350, hitbox:  2567, name: 'Mega Man Star Force',
+            boxart: 'box/sf1.png' },
+        { id:  18770, hitbox: 16953, name: 'Mega Man Star Force 2',
+            boxart: 'box/sf2.png' },
+        { id:  19495, hitbox: 17652, name: 'Mega Man Star Force 3',
+            boxart: 'box/sf3.png' },
+        { id: 416185, hitbox:     0, name: 'Mega Man Battle Network Chrono X',
+            boxart: 'box/bncx.png' }
+];
 </script>
 <script type="text/javascript" src="livenow.js"></script>
 <div id="livenow-container" style="width: 1200px"></div>
