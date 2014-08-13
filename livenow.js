@@ -197,7 +197,7 @@ $(function() {
 			rel: 'stylesheet',
 			type: 'text/css',
 			href: 'livenow.css'
-		}).appendTo('head');
+		}).prependTo('head');
 		
 		status = $('<p/>').hide().appendTo(container);
 		table = $('<table/>').hide().appendTo(container);
