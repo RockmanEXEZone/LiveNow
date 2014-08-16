@@ -23,6 +23,11 @@ $(function() {
 		jQuery.getJSON('https://api.twitch.tv/kraken/streams?callback=?', {
 			game: game.name
 		}, function(data) {
+			if (typeof data.streams === 'undefined') {
+				errors++;
+				return;
+			}
+			
 			for (var i = 0; i < data.streams.length; i++) {
 				var stream = data.streams[i];
 				
@@ -49,6 +54,11 @@ $(function() {
 			jQuery.getJSON('http://api.hitbox.tv/media/live/list', {
 				game: game.hitbox
 			}, function(data) {
+				if (typeof data.livestream === 'undefined') {
+					errors++;
+					return;
+				}
+				
 				for (var i = 0; i < data.livestream.length; i++) {
 					var stream = data.livestream[i];
 					
