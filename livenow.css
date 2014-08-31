@@ -23,6 +23,7 @@
 #livenow-container th:first-child {
 	padding: 5px;
 	vertical-align: top;
+	text-align: center;
 }
 #livenow-container td {
 	padding: 5px 10px;
