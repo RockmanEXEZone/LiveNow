@@ -3,6 +3,10 @@
 	text-align: left;
 	border-collapse: collapse;
 	border: 1px solid black;
+	color: black;
+}
+#livenow-container p {
+	margin: 0;
 }
 #livenow-container a {
 	color: blue;

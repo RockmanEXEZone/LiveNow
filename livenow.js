@@ -1,129 +1,508 @@
 $(function() {
+	var windowTitle = document.title;
+	
 	function addCommas(number) {
-		return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+		return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 	}
 	
-	var twitchLoaded = [];
-	var hitboxLoaded = [];
-	var errors = 0;
+	// Stream objects are passed around in the code below. These are the properties:
+	//     stream.platform = 'Twitch' or 'Hitbox'
+	//     stream.name = name of the streamer
+	//     stream.game = name of game
+	//     stream.desc = stream status/description
+	//     stream.url = url of stream
+	//     stream.viewers = current amount of viewers
+	//     stream.lastupdate = datetime of last update
 	
-	var streams = [];
+	function getApi(platform, params, onsuccess, onerror) {		
+		// Set base URL and callback.
+		var url;
+		switch (platform) {
+			case 'Twitch':
+				url = 'https://api.twitch.tv/kraken/streams?callback=?';
+				break;
+			case 'Hitbox':
+				url = 'http://api.hitbox.tv/media/live/list';
+				break;
+			case 'GamingLive':
+				url = "http://api.gaminglive.tv/channels";
+				break;
+		}
+		
+		// Make the request.
+		jQuery.getJSON(url, params, function(data) {
+			onsuccess(data);
+		}).fail(function(jqxhr) {
+			// Hitbox exception.
+			if (jqxhr.status === 404 && platform === 'Hitbox'
+				&& jqxhr.responseText === 'no_media_found') {
+				onsuccess(jqxhr.responseText);
+			} else {
+				onerror();
+			}
+		});
+	}
+
+	// The streams that are currently active.
+	var currentStreams = [];
+	// The streams that became inactive in the previous frame.
+	// Workaround for Twitch API reporting a stream going live when it goes down.
+	var purgedStreams = [];
+	// The games list.
+	var games = [];
+	// Amount of games loaded.
+	var loaded = 0;
+	// Total amount of games.
+	var total = 0;
 	
-	function processGame(game) {
-		streams[game.id] = [];
+	function updateStreams(platform, game, streams, clean) {
+		var updated = false;
 		
-		// Add game header to table.
-		var header = $('<tr/>', {
-			id: 'livenow-game-' + game.id,
-		}).hide().append($('<th/>', {
-			colspan: 6
-		}).html(game.name)).appendTo(table);
+		if (typeof clean === 'undefined') clean = false;
 		
-		// Call Twitch API.
-		jQuery.getJSON('https://api.twitch.tv/kraken/streams?callback=?', {
-			game: game.name
+		if (clean === true) {
+			// Delete all current streams that are not active anymore.
+			for (var i = 0; i < currentStreams.length; i++) {
+				// Check if stream is no longer in active streams of same platform and game.
+				if (currentStreams[i].platform == platform &&
+						currentStreams[i].game == game.name &&
+						findStream(streams, currentStreams[i]) < 0) {
+					// Remove the stream from the active streams.
+					purgedStreams.push(currentStreams.splice(i--, 1));
+					updated = true;
+				}
+			}
+		}
+		
+		// Add all new active streams.
+		for (var i = 0; i < streams.length; i++) {
+			var stream = streams[i];
+			// Check if stream is currently not in active streams.
+			var streamIndex = findStream(currentStreams, stream);
+			if (streamIndex < 0) {
+				// Add it to the active streams.
+				currentStreams.push(stream);
+				// Report the stream as active if it's not in the purged streams.
+				if (findStream(purgedStreams, stream) < 0) {
+					var initial = game.loaded[platform] < game.keys[platform].length;
+					reportStream(stream, initial);
+					updated = true;
+				}
+			} else {
+				// Update the stream.
+				currentStreams[streamIndex] = stream;
+			}
+		}
+		
+		// Clear all purged streams.
+		for (var i = 0; i < purgedStreams.length; i++) {
+			// Remove purged stream if it has the same game.
+			if (purgedStreams[i].game == game.name) {
+				purgedStreams.splice(i--, 1);
+			}
+		}
+		
+		if (clean === true) {
+			//console.log(currentStreams.length + ' streams active.');
+		}
+		
+		//if (updated || loaded <= total) {
+		//	updateDocument();
+		//}
+		updateDocument();
+	}
+	
+	function findStream(array, stream) {
+		// Find the first index of the stream in the array using streamEquals().
+		for (var i = 0; i < array.length; i++) {
+			if (streamEquals(array[i], stream)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	function streamEquals(stream1, stream2) {
+		return stream1.url == stream2.url &&
+				stream1.game == stream2.game &&
+				stream1.desc == stream2.desc;
+	}
+	
+	function getStreams(platform, game, ondata, onend, onerror, maxtries,
+        interval, page, pagesize, tries, key) {
+		// Set default parameters.
+		if (typeof maxtries === 'undefined') maxtries = 2;
+		if (typeof page === 'undefined') page = 0;
+		if (typeof interval === 'undefined') interval = 3000;
+		if (typeof tries === 'undefined') tries = maxtries;
+		if (typeof pagesize === 'undefined') pagesize = 25;
+		if (typeof key === 'undefined') key = 0;
+		
+		// Make the API request.
+		getApi(platform, {
+			game: game.keys[platform][key],
+			limit: pagesize,
+			offset: page * pagesize
 		}, function(data) {
-			if (typeof data.streams === 'undefined') {
-				errors++;
+			// Check Hitbox empty return value.
+			if (platform === 'Hitbox' && data === 'no_media_found') {
+				onend();
 				return;
 			}
 			
-			for (var i = 0; i < data.streams.length; i++) {
-				var stream = data.streams[i];
-				
-				streams[game.id].push({
-					url: stream.channel.url,
-					logo: stream.channel.logo || 'http://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_50x50.png',
-					name: stream.channel.display_name,
-					thumb: stream.preview.small,
-					desc: stream.channel.status,
-					viewers: stream.viewers,
-					platform: 'twitch'
+			// Pass received streams.
+			var streams = [];
+			switch (platform) {
+				case 'Twitch':
+					streams = extractTwitchStreams(data, game);
+					break;
+				case 'Hitbox':
+					streams = extractHitboxStreams(data, game);
+					break;
+				case 'GamingLive':
+					streams = extractGamingLiveStreams(data, game);
+					break;
+			}
+			ondata(streams);
+			
+			// Determine whether there are more pages to get.
+			page++;
+			var more = false;
+			switch (platform) {
+				case 'Twitch':
+					more = page * pagesize < data._total;
+					break;
+				case 'Hitbox':
+					more = data.livestream.length === pagesize;
+					break;
+				case 'GamingLive':
+					more = false;
+					break;
+			}
+			
+			if (more) {
+				// Get next page, if necessary.
+				getStreams(platform, game, ondata, onend, onerror,
+						maxtries, interval, page, pagesize, maxtries, 0);
+			} else {
+				key++;
+				if (key < game.keys[platform].length) {
+					// Get next key, if necessary
+					getStreams(platform, game, ondata, onend, onerror,
+						maxtries, interval, 0, pagesize, maxtries, key);
+				} else {				
+					// Signify end of data.
+					onend();
+				}
+			}
+		}, function() {
+			// Form error message.
+			var status = 'Error returned from ' + platform + ' API: page='
+					+ page + ', game.name=' + game.name + '.';
+			
+			if (--tries > 0) {
+				// Retry, if there are tries left.
+				status += ' Retrying in ' + interval + 'ms (' + tries + ' left)...';
+				console.log(status);
+				setTimeout(function() {
+					getStreams(platform, game, ondata, onend, onerror,
+							maxtries, interval, page, pagesize, tries, key);
+				}, interval);
+			} else {
+				// Abort.
+				status += ' Request aborted.';
+				console.log(status);
+				onerror();
+			}
+		});
+	}
+	
+	function extractTwitchStreams(data, game) {
+		var results = [];
+		for (var i = 0; i < data.streams.length; i++) {
+			var stream = data.streams[i];
+			results.push({
+				platform: 'Twitch',
+				logo: stream.channel.logo || 'http://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_50x50.png',
+				name: stream.channel.display_name,
+				thumb: stream.preview.small,
+				game: game.name,
+				url: stream.channel.url,
+				desc: stream.channel.status,
+				viewers: stream.viewers,
+				lastupdate: new Date().getTime()
+			});
+		}
+		return results;
+	}
+
+	function extractHitboxStreams(data, game) {
+		var results = [];
+		if (data !== 'no_media_found') {		
+			for (var i = 0; i < data.livestream.length; i++) {
+				var stream = data.livestream[i];
+				results.push({
+					platform: 'Hitbox',
+					logo: 'http://edge.sf.hitbox.tv' + stream.channel.user_logo_small,
+					name: stream.media_display_name,
+					thumb: 'http://edge.sf.hitbox.tv' + stream.media_thumbnail,
+					game: game.name,
+					url: 'http://hitbox.tv/' + stream.media_name,
+					desc: stream.media_status,
+					viewers: stream.media_views,
+					lastupdate: new Date().getTime()
 				});
 			}
-		}).fail(function() {
-			errors++;
-		}).always(function() {
-			twitchLoaded[game.id] = true;
-			done++;
-			checkDone(game, header);
-		});
-		
-		// Call Hitbox API.
-		if (game.hitbox) {
-			jQuery.getJSON('http://api.hitbox.tv/media/live/list', {
-				game: game.hitbox
-			}, function(data) {
-				if (typeof data.livestream === 'undefined') {
-					errors++;
-					return;
-				}
-				
-				for (var i = 0; i < data.livestream.length; i++) {
-					var stream = data.livestream[i];
-					
-					streams[game.id].push({
-						url: stream.channel.channel_link,
-						logo: 'http://edge.sf.hitbox.tv' + stream.channel.user_logo_small,
-						name: stream.channel.user_name,
-						thumb: 'http://edge.sf.hitbox.tv' + stream.media_thumbnail,
-						desc: stream.media_status,
-						viewers: stream.media_views,
-						platform: 'hitbox'
-					});
-				}
-			}).fail(function(jqxhr) {
-				if (jqxhr.responseText != 'no_media_found') {
-					errors++;
-				};
-			}).always(function() {
-				hitboxLoaded[game.id] = true;
-				done++;
-				checkDone(game, header);
+		}
+		return results;
+	}
+	
+	function extractGamingLiveStreams(data, game) {
+		var results = [];
+		for (var i = 0; i < data.channels.length; i++) {
+			var stream = data.channels[i];
+			results.push({
+				platform: 'GamingLive',
+				logo: 'http://cdn.gaminglive.tv/uploads/' + stream.owner + '/avatar/80x80.png',
+				name: stream.owner,
+				thumb: stream.state.thumbnailStatic,
+				game: game.name,
+				url: 'http://gmlv.tv/' + stream.slug,
+				desc: stream.name,
+				viewers: stream.state.viewers,
+				lastupdate: new Date().getTime()
 			});
-		} else {
-			hitboxLoaded[game.id] = true;
-			done++;
-			checkDone(game, header);
+		}
+		return results;
+	}
+	
+	function updateGame(platform, game) {		
+		var results = [];
+		//console.log("--------------------------------");
+		
+		getStreams(platform, game, function(data) {
+			// Got some streams; add them to the rest.
+			results = results.concat(data);
+		}, function() {
+			// Call successful; clean up inactive streams.
+			updateStreams(platform, game, results, true);
+			if (game.loaded[platform] < game.keys[platform].length) {
+				game.loaded[platform]++;
+				loaded++;
+			}
+		}, function() {
+			// Call (partially) failed; do not clean up inactive streams.
+			updateStreams(platform, game, results, false);
+			if (game.loaded[platform] < game.keys[platform].length) {
+				game.loaded[platform]++;
+				loaded++;
+			}
+		});
+	}
+	
+	function reportStream(stream, initial) {
+		// Modify this method to do whatever you want to do when a stream goes live.
+		console.log(stream.name + " is now playing " + stream.game + "! \""
+			+ stream.desc + "\" - " + stream.url);
+		
+		// Do not show notifications on initial load.
+		if (!initial) {
+			if (window.Notification && Notification.permission === 'granted') {
+				var n = new Notification(stream.name + ' live on ' + stream.platform + '\n' + stream.game, {
+					body: stream.desc,
+					icon: stream.logo
+				});
+				n.onclick = function() {
+					window.open(stream.url, '_blank');
+					n.close();
+				};
+				n.onshow = function() {
+					setTimeout(function() {
+						n.close();
+					}, 5000);
+				};
+			}
 		}
 	}
 	
-	function checkDone(game, header) {
-		if (twitchLoaded[game.id] && hitboxLoaded[game.id]) {			
-			var gameStreams = streams[game.id];
-			if (gameStreams.length > 0) {
-				$('<th/>', {
-					rowspan: gameStreams.length + 1
-				}).append($('<img/>', {
-					src: game.boxart || 'https://static-cdn.jtvnw.net/ttv-boxart/' + encodeURI(game.name) + '-52x72.jpg',
-				})).prependTo(header);
+	function initGames(list) {
+		games = [];
+		for (var i = 0; i < list.length; i++) {
+			var game = list[i];
+			games.push({
+				name: game.name,
+				boxart: game.boxart,
+				loaded: [],
+				keys: []
+			});
+		}
+		updateDocument();
+	}
+	
+	function initQueue(queue) {		
+		var platform = queue.platform;
+		
+		// Init update all.
+		for (var i = 0; i < queue.games.length; i++) {
+			var next = queue.games[i];
+			if (!(next.id in games)) {
+				queue.games.splice(i--, 1);
+				continue;
+			}
+			var game = games[next.id];
 			
-				gameStreams.sort(function(a, b) { return a.viewers - b.viewers; });
-				header.show();
-				for (var i = 0; i < gameStreams.length; i++) {
-					var stream = gameStreams[i];
+			if (typeof game.keys[platform] === 'undefined') {
+				game.keys[platform] = [];
+				game.loaded[platform] = 0;
+				total++;
+			} else {
+				queue.games.splice(i--, 1);
+			}
+			game.keys[platform].push(next.key || game.name);
+		}
+		
+		for (var i = 0; i < queue.games.length; i++) {
+			updateGame(platform, games[queue.games[i].id]);
+		}
+		
+		return setInterval(function() {
+			var next = queue.games.shift();
+			var game = games[next.id];
+			updateGame(platform, game);
+			queue.games.push(next);
+		// Put the length for one cycle (in ms) here.
+		}, 60000 / queue.games.length);
+	}
+	
+	function updateDocument() {
+		var table;
+		var status;
+		var container = $('#livenow-container');
+		if (container.length > 0) {
+			if (loaded < total) {
+				status = 'Loading games... (' + Math.round((loaded * 100) / total) + '%)';
+				document.title = windowTitle;
+			} else if (loaded >= total && loaded > 0 && currentStreams.length == 0) {
+				status = 'No one is streaming right now.';
+				document.title = windowTitle;
+			} else if (loaded == total) {
+				status = '';
+				loaded++;
+				document.title = '(' + currentStreams.length + ') ' + windowTitle;
+			}
+			
+			if (currentStreams.length > 0) {
+				document.title = '(' + currentStreams.length + ') ' + windowTitle;
+			} else {
+				document.title = windowTitle;
+			}
+			
+			if (typeof Tinycon !== 'undefined') {
+				if (currentStreams.length > 99) {
+					Tinycon.setBubble(99);
+				} else {
+					Tinycon.setBubble(currentStreams.length);
+				}
+			}
+			
+			table = $('<table/>').hide();
+			
+			for (var i = 0; i < games.length; i++) {
+				var game = games[i];
+				var streams = currentStreams.filter(function(o) {
+					return o.game === game.name;
+				});
+				
+				if (streams.length <= 0) {
+					continue;
+				}
+				
+				streams.sort(function(a, b) {
+					var r = b.viewers - a.viewers;
+					if (r == 0) {
+						var name1 = a.name.toLowerCase();
+						var name2 = b.name.toLowerCase();
+						if (name1 < name2) {
+							r = -1;
+						} else if (name2 > name1) {
+							r = 1;
+						} else {
+							r = 0;
+						}
+					}
+					return r;
+				});
+				
+				// Add game header to table.
+				$('<tr/>', {
+					id: 'livenow-game-' + i
+				}).append(
+					$('<th/>', {
+						rowspan: streams.length + 1
+					}).append(
+						$('<img/>', {
+							src: game.boxart || 'https://static-cdn.jtvnw.net/ttv-boxart/' + encodeURI(game.name) + '-52x72.jpg',
+						})
+					)
+				).append(
+					$('<th/>', {
+						colspan: 6
+					}).html(game.name)
+				).appendTo(table);
+				
+				// Append stream rows.
+				for (var j = 0; j < streams.length; j++) {
+					var stream = streams[j];
+					var fallback = '';
 					
 					var thumb = $('<img/>', {
-						src: stream.thumb,
+						src: stream.thumb + "?" + stream.lastupdate,
 						width: 80,
 						height: 50
 					});
-					var fallback = '';
 					switch (stream.platform) {
-						case 'twitch':
+						case 'Twitch':
 							fallback = 'http://static-cdn.jtvnw.net/ttv-static/404_preview-80x50.jpg';
 							break;
-						case 'hitbox':
+						case 'Hitbox':
 							fallback = 'http://www.hitbox.tv/static/img/live/no-tn.jpg';
 							break;
+						case 'GamingLive':
+							fallback = '/img/thumb.png';
+							break;
 					}
-					
 					if (fallback) {
 						thumb.error(function() {
 							thumb.attr('src', fallback);
 						});
 						thumb.css('background', 'url(' + fallback + ')');
 						thumb.css('background-size', 'cover');
+						fallback = '';
+					}
+					
+					var avatar = $('<img/>', {
+						src: stream.logo,
+						width: 50,
+						height: 50
+					});
+					switch (stream.platform) {
+						case 'Twitch':
+							fallback = '';
+							break;
+						case 'Hitbox':
+							fallback = '';
+							break;
+						case 'GamingLive':
+							fallback = 'http://www.gaminglive.tv/img/empty-avatar-80x80.jpg';
+							break;
+					}
+					if (fallback) {
+						avatar.error(function() {
+							thumb.attr('src', fallback);
+						});
+						thumb.css('background', 'url(' + fallback + ')');
+						thumb.css('background-size', 'cover');
+						fallback = '';
 					}
 					
 					var a = $('<a/>', {
@@ -133,7 +512,7 @@ $(function() {
 						// Platform cell
 						$('<td/>').append(
 							$('<img/>', {
-								src: 'logo/' + stream.platform + '.png',
+								src: 'img/' + stream.platform + '.png',
 								width: 50,
 								height: 50
 							}).css('border', 'none')
@@ -141,11 +520,7 @@ $(function() {
 						// Logo cell
 						$('<td/>').append(
 							a.clone().append(
-								$('<img/>', {
-									src: stream.logo,
-									width: 50,
-									height: 50
-								})
+								avatar
 							)
 						),
 						// Name cell
@@ -163,60 +538,57 @@ $(function() {
 							$('<div/>').html(addCommas(stream.viewers)),
 							'viewers'
 						)
-					).insertAfter(header);
+					).appendTo(table);
 				}
-				active++;
 			}
 			
-			updateStatus();
-		}
-	}
-
-
-	function updateStatus() {
-		var s = '';
-		if (done == livenow_games.length * 2) {
-			if (active <= 0) {
-				s = 'No one is streaming right now.';
+			container.empty();
+			if (status) {
+				$('<p/>').html(status).appendTo(container);
 			}
-			table.show();
-		} else {
-			s = 'Loading games... (' + Math.round((done * 100) / (livenow_games.length * 2)) + '%)';
-		}
-		if (errors > 0) {
-			if (s) {
-				s += '<br>';
+			if (table) {
+				table.show();
+				table.appendTo(container);
 			}
-			s += errors + ' errors during loading. Some streams may not be shown.';
-		}
-		if (s) {
-			status.html(s).show();
-		} else {
-			status.html(s).hide();
 		}
 	}
 	
-	var status;
-	var table;
-	var done = 0;
-	var active = 0;
-	var container = $('#livenow-container');
-	if (container.length > 0) {
-		container.empty();
-		$('<link>', {
-			rel: 'stylesheet',
-			type: 'text/css',
-			href: 'livenow.css'
-		}).prependTo('head');
-		
-		status = $('<p/>').hide().appendTo(container);
-		table = $('<table/>').hide().appendTo(container);
-		
-		done = 0;
-		active = 0;
-		updateStatus();
-		for (var i = 0; i < livenow_games.length; i++) {
-			processGame(livenow_games[i]);
-		}
+	$('<link>', {
+		rel: 'stylesheet',
+		type: 'text/css',
+		href: 'livenow.css'
+	}).prependTo('head');
+	
+	if (typeof Tinycon !== 'undefined') {
+		Tinycon.setOptions({
+			width: 6,
+			height: 9,
+			colour: '#FFFFFF',
+			background: '#22242A',
+			fallback: false,
+			abbreviate: true
+		});
+	}
+	
+	updateDocument();
+	
+	if (window.Notification && Notification.permission !== 'granted') {
+		Notification.requestPermission(function(status) {
+			if (Notification.permission !== status) {
+				Notification.permission = status;
+			}
+		});
+	}
+	
+	window.LiveNow = {
+		initGames: function(list) {
+			initGames(list);
+		},
+		initQueue: function(platform, queue) {
+			initQueue({
+				platform: platform,
+				games: queue
+			});
+		}			
 	}
 });

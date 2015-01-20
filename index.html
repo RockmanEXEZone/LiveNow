@@ -3,52 +3,114 @@
 <head>
 	<meta charset="utf-8"/>
 	<title>Live Now</title>
+	<link rel="shortcut icon" href="favicon.ico">
 	<link rel="stylesheet" type="text/css" href="style.css">
 	<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+	<script type="text/javascript" src="tinycon.min.js"></script>
+	<script type="text/javascript" src="livenow.js"></script>
+	<style>
+		body {
+			margin: 10px;
+			background: #111;
+			color: #AAA;
+			font-family: sans-serif;
+		}
+		
+		a {
+			color: #AAF;
+		}
+	</style>
 </head>
 <body>
 <div id="main">
-	<a href="http://www.therockmanexezone.com/"><img src="http://www.therockmanexezone.com/wp-content/themes/TREZ_WP/images/logo03.png" width="461" height="125"></a>
-	<h1>Live Now</h1>
-	<p>Checks for active Twitch and Hitbox streams of the Mega Man Battle Network and Mega Man Star Force games. All Twitch and Hitbox API requests are made from your browser. Source and license can be found on <a href="https://github.com/Prof9/livenow">GitHub</a></p>
-	<script type="text/javascript">
-		var livenow_games = [
-			{ id:   7542, hitbox:  7705, name: 'Mega Man Battle Network',
-				boxart: 'box/bn1.png' },
-			{ id:  24465, hitbox: 21710, name: 'Rockman EXE Operate Shooting Star',
-				boxart: 'box/exeoss.png' },
-			{ id:   4682, hitbox:  5312, name: 'Mega Man Battle Network 2',
-				boxart: 'box/bn2.png' },
-			{ id:  12105, hitbox: 11480, name: 'Mega Man Battle Network 3',
-				boxart: 'box/bn3.png' },
-			{ id:   3108, hitbox:  4021, name: 'Mega Man Battle Network 4',
-				boxart: 'box/bn4.png' },
-			{ id:  10763, hitbox: 10393, name: 'Rockman EXE 4.5 Real Operation',
-				boxart: 'box/exe45.png' },
-			{ id:  11522, hitbox: 10999, name: 'Mega Man Battle Network 5',
-				boxart: 'box/bn5.png' },
-			{ id:   9009, hitbox:  8916, name: 'Mega Man Battle Network 5: Double Team DS',
-				boxart: 'box/bn5ds.png' },
-			{ id:   7325, hitbox:  7535, name: 'Mega Man Battle Network 6',
-				boxart: 'box/bn6.png' },
-			{ id:  17587, hitbox: 15975, name: 'Mega Man Battle Chip Challenge',
-				boxart: 'box/bcc.png' },
-			{ id:   5831, hitbox:     0, name: 'Mega Man Network Transmission',
-				boxart: 'box/nt.png' },
-			{ id:  22528, hitbox:     0, name: 'Rockman EXE WS',
-				boxart: 'box/exews.png' },
-			{ id:   1350, hitbox:  2567, name: 'Mega Man Star Force',
-				boxart: 'box/sf1.png' },
-			{ id:  18770, hitbox: 16953, name: 'Mega Man Star Force 2',
-				boxart: 'box/sf2.png' },
-			{ id:  19495, hitbox: 17652, name: 'Mega Man Star Force 3',
-				boxart: 'box/sf3.png' },
-			{ id: 416185, hitbox:     0, name: 'Mega Man Battle Network Chrono X',
-				boxart: 'box/bncx.png' }
-		];
-	</script>
-	<script type="text/javascript" src="livenow.js"></script>
-	<div id="livenow-container" style="width: 1200px"></div>
+	<div style="float: left; width: 300px; margin-right: 10px">
+		<a href="http://www.therockmanexezone.com/"><img src="http://www.therockmanexezone.com/wp-content/themes/TREZ_WP/images/logo03.png" width="300"></a>
+		<h1 style="margin: 0;">Live Now 2.0</h1>
+		<p style="margin: 0;">Checks for active Twitch, Hitbox and Gaming Live streams of the Mega Man Battle Network and Mega Man Star Force games.</p>
+		<p>All API requests are made from your browser. The overview to the right automatically updates as long as you keep this tab open. <strong style="color: #EEE;">Therefore, avoid opening Live Now in more than one tab, and avoid refreshing constantly.</strong> If you do, it will result in more traffic going towards the APIs, meaning you may get throttled.</p>
+		<p>If your browser supports desktop notifications, you can get notified whenever a stream goes live. Also, if you pin this tab, it will start flashing when someone goes live or offline.</p>
+		<p>Source and license can be found on <a href="https://github.com/Prof9/livenow">GitHub</a>. This instance of Live Now uses <a href="https://github.com/tommoor/tinycon">Tinycon by Tom Moor.</a></p>
+	</div>
+	<div style="max-width: 1200px; overflow-x: auto;">
+		<div id="livenow-container"></div>
+		<script type="text/javascript">
+			$(function() {
+				// Initialize games.
+				LiveNow.initGames([
+					{ name: "Mega Man Battle Network",						boxart: 'box/bn1.png' },
+					{ name: "Rockman EXE Operate Shooting Star",			boxart: 'box/exeoss.png' },
+					{ name: "Mega Man Battle Network 2",					boxart: 'box/bn2.png' },
+					{ name: "Mega Man Battle Network 3",					boxart: 'box/bn3.png' },
+					{ name: "Mega Man Battle Network 4",					boxart: 'box/bn4.png' },
+					{ name: "Rockman EXE 4.5 Real Operation",				boxart: 'box/exe45.png' },
+					{ name: "Mega Man Battle Network 5",					boxart: 'box/bn5.png' },
+					{ name: "Mega Man Battle Network 5: Double Team DS",	boxart: 'box/bn5ds.png' },
+					{ name: "Mega Man Battle Network 6",					boxart: 'box/bn6.png' },
+					{ name: "Mega Man Battle Chip Challenge",				boxart: 'box/bcc.png' },
+					{ name: "Mega Man Network Transmission",				boxart: 'box/nt.png' },
+					{ name: "Rockman EXE WS",								boxart: 'box/exews.png' },
+					{ name: "Mega Man Star Force",							boxart: 'box/sf1.png' },
+					{ name: "Mega Man Star Force 2",						boxart: 'box/sf2.png' },
+					{ name: "Mega Man Star Force 3",						boxart: 'box/sf3.png' },
+					{ name: "Mega Man Battle Network Chrono X",				boxart: 'box/bncx.png' }
+				]);
+				
+				// Initialize Twitch queue.
+				LiveNow.initQueue("Twitch", [
+					{ id: 0 },
+					{ id: 1 },
+					{ id: 2 },
+					{ id: 3 },
+					{ id: 4 },
+					{ id: 5 },
+					{ id: 6 },
+					{ id: 7 },
+					{ id: 8 },
+					{ id: 9 },
+					{ id: 10 },
+					{ id: 11 },
+					{ id: 12 },
+					{ id: 13 },
+					{ id: 14 },
+					{ id: 15 }
+				]);
+
+				// Initialize Hitbox queue.
+				LiveNow.initQueue("Hitbox", [
+					{ id: 0,	key: 7705 },
+					{ id: 1,	key: 21710 },
+					{ id: 2,	key: 5312 },
+					{ id: 3,	key: 11480 },
+					{ id: 4,	key: 4021 },
+					{ id: 5,	key: 10393 },
+					{ id: 6,	key: 10999 },
+					{ id: 7,	key: 8916 },
+					{ id: 8,	key: 7535 },
+					{ id: 9,	key: 15975 },
+					{ id: 12,	key: 2567 },
+					{ id: 13,	key: 16953 },
+					{ id: 14,	key: 17652 }
+				]);
+				
+				// Initialize Gaming Live queue.
+				LiveNow.initQueue("GamingLive", [
+					{ id: 0,	key: "battle-network-rockman-exe" },
+					{ id: 3,	key: "mega-man-battle-network-3" },
+					{ id: 4,	key: "mega-man-battle-network-4-blue-moon" },
+					{ id: 6,	key: "mega-man-battle-network-5-team-protoman" },
+					{ id: 6,	key: "mega-man-battle-network-5-team-colonel" },
+					{ id: 7,	key: "mega-man-battle-network-5-double-team" },
+					{ id: 9,	key: "mega-man-battle-chip-challenge" },
+					{ id: 10,	key: "mega-man-network-transmission" },
+					{ id: 12,	key: "mega-man-star-force" },
+					{ id: 12,	key: "megaman-star-force-dragon" },
+					{ id: 13,	key: "mega-man-star-force-2" },
+					{ id: 14,	key: "mega-man-star-force-3" }
+				]);
+			});
+		</script>
+	</div>
+	<div style="clear: both;"></div>
 </div>
 </body>
 </html>
