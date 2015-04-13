@@ -19,19 +19,34 @@
 		a {
 			color: #AAF;
 		}
+		
+		div.beta {
+			position: fixed;
+			bottom: 0;
+			padding: 5px;
+			border-radius: 7px;
+			border-bottom-left-radius: 0;
+			border-bottom-right-radius: 0;
+			background: #222;
+			color: #888;
+			font-size: 80%;
+			font-weight: bold;
+		}
 	</style>
 </head>
 <body>
 <img src="img/mark.png" style="position: fixed; right: 10px; bottom: 0; z-index: -9999;">
 <div id="main">
-	<div style="float: left; width: 300px; margin-right: 10px">
+	<div style="float: left; width: 300px; margin-right: 10px; margin-bottom: 1em;">
 		<a href="http://www.therockmanexezone.com/"><img src="img/logo.png" width="300"></a>
-		<h1 style="margin: 0;">Live Now 2.0</h1>
+		<h1 style="margin: 0;">Live Now 2.1 <em style="font-style: italic; font-size: 50%; display: inline;">Beta</em></h1>
 		<p style="margin: 0;">Checks for active Twitch, Hitbox and Gaming Live streams of the Mega Man Battle Network and Mega Man Star Force games.</p>
 		<p>All API requests are made from your browser. The overview to the right automatically updates as long as you keep this tab open. <strong style="color: #EEE;">Therefore, avoid opening Live Now in more than one tab, and avoid refreshing constantly.</strong> If you do, it will result in more traffic going towards the APIs, meaning you may get throttled.</p>
 		<p>If your browser supports desktop notifications, you can get notified whenever a stream goes live. Also, if you pin this tab, it will start flashing when someone goes live or offline.</p>
 		<p>Source and license can be found on <a href="https://github.com/Prof9/livenow">GitHub</a>. This instance of Live Now uses <a href="https://github.com/tommoor/tinycon">Tinycon by Tom Moor</a>.</p>
 	</div>
+	<div class="beta" style="display: none;" style="color: #AAA">Try the beta? <a href="beta/">Click here.</a></div>
+	<div class="beta" style="display: block;">This is the beta. <a href="https://github.com/Prof9/livenow/issues/new" target="_blank" style="color: #AAA">Find any errors?</a></div>
 	<div style="max-width: 1200px; overflow-x: auto;">
 		<div id="livenow-container"></div>
 		<script type="text/javascript">
