@@ -13,6 +13,7 @@ $(function() {
 	//     stream.url = url of stream
 	//     stream.viewers = current amount of viewers
 	//     stream.lastupdate = datetime of last update
+	//     stream.decay = decay value of stream (purged if 0)
 	
 	function getApi(platform, params, onsuccess, onerror) {		
 		// Set base URL and callback.
@@ -45,9 +46,6 @@ $(function() {
 
 	// The streams that are currently active.
 	var currentStreams = [];
-	// The streams that became inactive in the previous frame.
-	// Workaround for Twitch API reporting a stream going live when it goes down.
-	var purgedStreams = [];
 	// The games list.
 	var games = [];
 	// Amount of games loaded.
@@ -55,60 +53,47 @@ $(function() {
 	// Total amount of games.
 	var total = 0;
 	
-	function updateStreams(platform, game, streams, clean) {
-		var updated = false;
+	function updateStreams(platform, game, streams, decay) {		
+		if (typeof decay === 'undefined') decay = false;
 		
-		if (typeof clean === 'undefined') clean = false;
-		
-		if (clean === true) {
-			// Delete all current streams that are not active anymore.
+		if (decay === true) {
+			// Decay all current streams for current game and platform.
 			for (var i = 0; i < currentStreams.length; i++) {
-				// Check if stream is no longer in active streams of same platform and game.
-				if (currentStreams[i].platform == platform &&
-						currentStreams[i].game == game.name &&
-						findStream(streams, currentStreams[i]) < 0) {
-					// Remove the stream from the active streams.
-					purgedStreams.push(currentStreams.splice(i--, 1));
-					updated = true;
+				// Check if stream has the same platform and game.
+				if (currentStreams[i].platform == platform
+						&& currentStreams[i].game == game.name) {
+					if (currentStreams[i].decay-- == 0) {
+						currentStreams.splice(i--, 1);
+					}
 				}
 			}
 		}
 		
-		// Add all new active streams.
+		// Process current active streams.
 		for (var i = 0; i < streams.length; i++) {
 			var stream = streams[i];
+			
+			// Set default stream decay.
+			stream.decay = 2;
+			
 			// Check if stream is currently not in active streams.
 			var streamIndex = findStream(currentStreams, stream);
 			if (streamIndex < 0) {
 				// Add it to the active streams.
 				currentStreams.push(stream);
-				// Report the stream as active if it's not in the purged streams.
-				if (findStream(purgedStreams, stream) < 0) {
-					var initial = game.loaded[platform] < game.keys[platform].length;
-					reportStream(stream, initial);
-					updated = true;
-				}
+				// Report the stream as active, unless the game has not fully loaded yet.
+				var initial = game.loaded[platform] < game.keys[platform].length;
+				reportStream(stream, initial);
 			} else {
 				// Update the stream.
 				currentStreams[streamIndex] = stream;
 			}
 		}
 		
-		// Clear all purged streams.
-		for (var i = 0; i < purgedStreams.length; i++) {
-			// Remove purged stream if it has the same game.
-			if (purgedStreams[i].game == game.name) {
-				purgedStreams.splice(i--, 1);
-			}
-		}
-		
-		if (clean === true) {
+		if (decay === true) {
 			//console.log(currentStreams.length + ' streams active.');
 		}
 		
-		//if (updated || loaded <= total) {
-		//	updateDocument();
-		//}
 		updateDocument();
 	}
 	
@@ -284,14 +269,14 @@ $(function() {
 			// Got some streams; add them to the rest.
 			results = results.concat(data);
 		}, function() {
-			// Call successful; clean up inactive streams.
+			// Call successful; decay inactive streams.
 			updateStreams(platform, game, results, true);
 			if (game.loaded[platform] < game.keys[platform].length) {
 				game.loaded[platform]++;
 				loaded++;
 			}
 		}, function() {
-			// Call (partially) failed; do not clean up inactive streams.
+			// Call (partially) failed; do not decay inactive streams.
 			updateStreams(platform, game, results, false);
 			if (game.loaded[platform] < game.keys[platform].length) {
 				game.loaded[platform]++;
@@ -589,6 +574,6 @@ $(function() {
 				platform: platform,
 				games: queue
 			});
-		}			
+		}
 	}
 });
