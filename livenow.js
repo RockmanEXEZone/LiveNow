@@ -544,12 +544,6 @@ $(function() {
 		}
 	}
 	
-	$('<link>', {
-		rel: 'stylesheet',
-		type: 'text/css',
-		href: 'livenow.css'
-	}).prependTo('head');
-	
 	if (typeof Tinycon !== 'undefined') {
 		Tinycon.setOptions({
 			width: 6,
@@ -580,6 +574,19 @@ $(function() {
 				platform: platform,
 				games: queue
 			});
+		},
+		setTheme: function(cssPath) {
+			var style = $('link#livenow-style');
+			if (style.length == 0) {
+				$('<link>', {
+					id: 'livenow-style',
+					rel: 'stylesheet',
+					type: 'text/css',
+					href: cssPath
+				}).prependTo('head');
+			} else {
+				style.attr('href', cssPath);
+			}
 		}
 	}
 });

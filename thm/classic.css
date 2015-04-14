@@ -1,0 +1,52 @@
+#livenow-container table {
+	width: 100%;
+	text-align: left;
+	border-collapse: collapse;
+	border: 1px solid black;
+	color: black;
+}
+#livenow-container p {
+	margin: 0;
+}
+#livenow-container a {
+	color: blue;
+	text-decoration: initial;
+}
+#livenow-container img {
+	vertical-align: middle;
+	border: 1px solid black
+}
+#livenow-container th, #livenow-container td {
+	border-bottom: 1px solid black;
+	width: 1px;
+}
+#livenow-container th {
+	padding: 2px 0;
+	background: #00CFFF;
+	text-align: left;
+}
+#livenow-container th:first-child {
+	padding: 5px;
+	vertical-align: top;
+	text-align: center;
+}
+#livenow-container td {
+	padding: 5px 10px;
+}
+#livenow-container tr:nth-child(odd) td {
+	background: #CFFFFF;
+}
+#livenow-container tr:nth-child(even) td {
+	background: #BFEFFF;
+}
+#livenow-container td:first-child {
+	padding-left: 5px;
+	border-left: 1px solid black;
+}
+#livenow-container td:last-child {
+	text-align: center;
+	padding-right: 5px;
+}
+#livenow-container td:last-child div {
+	font-size: x-large;
+}
