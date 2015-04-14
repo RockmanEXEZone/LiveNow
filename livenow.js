@@ -496,7 +496,8 @@ $(function() {
 					}
 					
 					var a = $('<a/>', {
-						href: stream.url
+						href: stream.url,
+						target: '_blank'
 					});
 					$('<tr/>').append(
 						// Platform cell
