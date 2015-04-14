@@ -1,6 +1,8 @@
 $(function() {
 	var windowTitle = document.title;
 	
+	var url_regex = /(?:\s)(?:https?:\/\/)?(([^\s#\.\/?&=%\-_'"]+\.)([^\s:#\.\/?&=%_'"]*[^\s:#\.\/\-?&=%_'"]\.)*(?!exe)([^\d\s:#\.\/?&=%\-_'"]{2,})(:[0-9]{0,5})?(\/[^\s:#\.\/?&=%\-_'"]+)*\/?(#[^\s:#\/?&=%'"]*)?\??[^\s:\/?&=%'"]*=?([^\s:#\/?&='"]+)?(&[^\s:#\/?&=%'"]*=?[^\s:#\/?&='"]*)*\/?)/i;
+	
 	function addCommas(number) {
 		return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 	}
@@ -440,6 +442,9 @@ $(function() {
 					var stream = streams[j];
 					var fallback = '';
 					
+					// Parse URLs.
+					var desc = stream.desc.replace(url_regex, "<a href=\"http://$1\" target=\"_blank\">$&</a>");
+					
 					var thumb = $('<img/>', {
 						src: stream.thumb + "?" + stream.lastupdate,
 						width: 80,
@@ -518,7 +523,7 @@ $(function() {
 						$('<td/>').append(
 							a.clone().append(thumb)
 						),
-						$('<td/>').css('width', '100%').html(stream.desc),
+						$('<td/>').css('width', '100%').html(desc),
 						$('<td/>').append(
 							$('<div/>').html(addCommas(stream.viewers)),
 							'viewers'
