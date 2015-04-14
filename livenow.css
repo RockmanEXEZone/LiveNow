@@ -25,6 +25,7 @@
 	padding: 2px 0;
 	background: #1F3FAF;
 	color: #8FAFFF;
+	text-align: left;
 }
 #livenow-container th:first-child {
 	padding: 5px;
