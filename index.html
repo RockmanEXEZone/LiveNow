@@ -58,6 +58,8 @@
 	<div class="tab fade" style="position: absolute; right: 10pt; bottom: 0;">
 		Style:
 		<select id="theme">
+			<option value="">Default</option>
+			<option value="" disabled>------------</option>
 			<option value="retrofit" selected>Retrofit</option>
 			<option value="megabuster">MegaBuster</option>
 			<option value="classic">Classic</option>
@@ -103,10 +105,18 @@
 					$(this).fadeTo('fast', '0.3');
 				});
 				
+				var defaultTheme = $('select#theme').val();
+				$('select#theme option:first').text('Default (' + $('select#theme option:selected').text() + ')');
 				$('select#theme').change(function() {
 					var theme = $(this).val();
-					LiveNow.setTheme('thm/' + theme + '.css');
-					setCookie('theme', theme);
+					if (!theme) {
+						LiveNow.setTheme('thm/' + defaultTheme + '.css');
+						deleteCookie('theme');
+						$('select#theme')[0].selectedIndex = 0;
+					} else if (typeof theme !== 'null') {
+						LiveNow.setTheme('thm/' + theme + '.css');
+						setCookie('theme', theme);
+					}
 				});
 				
 				var cookies = getCookies();
@@ -115,7 +125,8 @@
 					setCookie('theme', cookies.theme);
 					$('select#theme').val(cookies.theme);
 				} else {
-					LiveNow.setTheme('thm/' + $('select#theme').val() + '.css');
+					LiveNow.setTheme('thm/' + defaultTheme + '.css');
+					$('select#theme')[0].selectedIndex = 0;
 				}
 				
 				// Initialize games.
