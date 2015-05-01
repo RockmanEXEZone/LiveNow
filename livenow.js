@@ -443,7 +443,11 @@ $(function() {
 					var fallback = '';
 					
 					// Parse URLs.
-					var desc = stream.desc.replace(url_regex, "<a href=\"http://$1\" target=\"_blank\">$&</a>");
+					var desc = stream.desc;
+					if (typeof desc === 'undefined') {
+						desc = '';
+					}
+					desc = desc.replace(url_regex, "<a href=\"http://$1\" target=\"_blank\">$&</a>");
 					
 					var thumb = $('<img/>', {
 						src: stream.thumb + "?" + stream.lastupdate,
