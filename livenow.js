@@ -110,9 +110,7 @@ $(function() {
 	}
 
 	function streamEquals(stream1, stream2) {
-		return stream1.url == stream2.url &&
-				stream1.game == stream2.game &&
-				stream1.desc == stream2.desc;
+		return stream1.url == stream2.url;
 	}
 	
 	function getStreams(platform, game, ondata, onend, onerror, maxtries,
