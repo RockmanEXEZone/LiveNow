@@ -67,6 +67,36 @@
 		<div id="livenow-container"></div>
 		<script type="text/javascript">
 			$(function() {
+				function getCookies() {
+					var cookies = {};
+					document.cookie.split(/;\s*/).forEach(function(e) {
+						var c = e.split('=');
+						if (c[0].startsWith('livenow_')) {
+							cookies[c[0].substr(('livenow_').length)] = c[1];
+						}
+					});
+					return cookies;
+				}
+				
+				function setCookie(key, value, expires, path) {
+					if (expires === undefined) {
+						expires = 'Fri, 31 Dec 9999 23:59:59 GMT';
+					} else {
+						expires = expires.toUTCString();
+					}
+					if (path === undefined) {
+						path = '/';
+					}
+					var cookie = 'livenow_' + key + '=' + value;
+					cookie += '; expires=' + expires;
+					cookie += '; path=' + path;
+					document.cookie = cookie;
+				}
+				
+				function deleteCookie(key) {
+					setCookie(key, '', new Date(0));
+				}
+				
 				$('.fade').hover(function() {
 					$(this).fadeTo('fast', '1');
 				}, function() {
@@ -74,9 +104,19 @@
 				});
 				
 				$('select#theme').change(function() {
-					LiveNow.setTheme('thm/' + $(this).val() + '.css');
+					var theme = $(this).val();
+					LiveNow.setTheme('thm/' + theme + '.css');
+					setCookie('theme', theme);
 				});
-				LiveNow.setTheme('thm/' + $('select#theme').val() + '.css');
+				
+				var cookies = getCookies();
+				if (cookies.theme) {
+					LiveNow.setTheme('thm/' + cookies.theme + '.css');
+					setCookie('theme', cookies.theme);
+					$('select#theme').val(cookies.theme);
+				} else {
+					LiveNow.setTheme('thm/' + $('select#theme').val() + '.css');
+				}
 				
 				// Initialize games.
 				LiveNow.initGames([
