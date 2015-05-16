@@ -54,6 +54,8 @@ $(function() {
 	var loaded = 0;
 	// Total amount of games.
 	var total = 0;
+	// Stops GUI updates if true.
+	var paused = false;
 	
 	function updateStreams(platform, game, streams, decay) {		
 		if (typeof decay === 'undefined') decay = false;
@@ -360,6 +362,10 @@ $(function() {
 	}
 	
 	function updateDocument() {
+		if (paused) {
+			return;
+		}
+		
 		var table;
 		var status;
 		var container = $('#livenow-container');
@@ -589,6 +595,9 @@ $(function() {
 			} else {
 				style.attr('href', cssPath);
 			}
+		},
+		pauseLayout: function(value) {
+			paused = value;
 		}
 	}
 });
