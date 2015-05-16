@@ -597,6 +597,10 @@ $(function() {
 			}
 		},
 		pauseLayout: function(value) {
+			if (paused && !value) {
+				paused = false;
+				updateDocument();
+			}
 			paused = value;
 		}
 	}
