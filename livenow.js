@@ -77,6 +77,11 @@ $(function() {
 		for (var i = 0; i < streams.length; i++) {
 			var stream = streams[i];
 			
+			// Skip invalid streams (thanks Twitch).
+			if (typeof stream.url === 'undefined') {
+				continue;
+			}
+			
 			// Set default stream decay.
 			stream.decay = 2;
 			
@@ -89,8 +94,12 @@ $(function() {
 				var initial = game.loaded[platform] < game.keys[platform].length;
 				reportStream(stream, initial);
 			} else {
-				// Update the stream.
-				currentStreams[streamIndex] = stream;
+				// Update all the info that's not missing (thanks Twitch).
+				for (var key in stream) {
+					if (typeof stream[key] !== 'undefined') {
+						currentStreams[streamIndex][key] = stream[key];
+					}
+				}
 			}
 		}
 		
