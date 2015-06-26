@@ -74,7 +74,7 @@
 					var cookies = {};
 					document.cookie.split(/;\s*/).forEach(function(e) {
 						var c = e.split('=');
-						if (c[0].startsWith('livenow_')) {
+						if (c[0].slice(0, 8) === 'livenow_') {
 							cookies[c[0].substr(('livenow_').length)] = c[1];
 						}
 					});
