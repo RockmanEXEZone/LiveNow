@@ -377,10 +377,11 @@ $(function() {
 		
 		var table;
 		var status;
+		var progress = loaded >= total ? 0 : Math.round((loaded * 100) / total);
 		var container = $('#livenow-container');
 		if (container.length > 0) {
 			if (loaded < total) {
-				status = 'Loading games... (' + Math.round((loaded * 100) / total) + '%)';
+				status = 'Loading games... (' + progress + '%)';
 				document.title = windowTitle;
 			} else if (loaded >= total && loaded > 0 && currentStreams.length == 0) {
 				status = 'No one is streaming right now.';
@@ -552,7 +553,22 @@ $(function() {
 			
 			container.empty();
 			if (status) {
-				$('<p/>').html(status).appendTo(container);
+				$('<p/>')
+				.attr('style', 'background: ' + (loaded >= total ?
+						'none !important' :
+						'transparent'
+					) +
+					';'
+				)
+				.css({
+					'overflow-x': 'visible',
+					'white-space': 'nowrap',
+					'padding': '2pt 5pt',
+					'font-size': '80%',
+					'width': progress + '%'
+				})
+				.html(status)
+				.appendTo(container);
 			}
 			if (table) {
 				table.show();
