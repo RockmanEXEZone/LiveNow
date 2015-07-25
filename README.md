@@ -19,7 +19,7 @@ To embed Live Now on a web page:
 
 **LiveNow.initGames()** takes one parameter: an array of objects, where every object contains a **name** property containing your preferred name for the game, and an optional **boxart** property containing the URL for that game's boxart. If no boxart is specified, it is loaded from Twitch.
 
-**LiveNow.initQueue()** takes one parameter, which is an object. The first is the platform, which must be either "**Twitch**" or "**Hitbox**". The second is an array of game objects, where every object contains a **id** property which is the index of said game in the **LiveNow.initGames()** call parameter, and an optional **key** property which contains the identifier for that game in the platform's API; if none is specified, the game's title from the **LiveNow.initGames()** call is used as its identifier. If a game has multiple API identifiers, then supply a game object for each with the same **id**, but different **key**.
+**LiveNow.initQueue()** takes two parameters. The first is the platform, which must be either "**Twitch**" or "**Hitbox**". The second is an array of game objects, where every object contains a **id** property which is the index of said game in the **LiveNow.initGames()** call parameter, and an optional **key** property which contains the identifier for that game in the platform's API; if none is specified, the game's title from the **LiveNow.initGames()** call is used as its identifier. If a game has multiple API identifiers, then supply a game object for each with the same **id**, but different **key**.
 
 Tinycon support
 ---------------
