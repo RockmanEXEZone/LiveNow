@@ -27,9 +27,6 @@ $(function() {
 			case 'Hitbox':
 				url = 'http://api.hitbox.tv/media/live/list';
 				break;
-			case 'GamingLive':
-				url = "http://api.gaminglive.tv/channels";
-				break;
 		}
 		
 		// Make the request.
@@ -155,9 +152,6 @@ $(function() {
 				case 'Hitbox':
 					streams = extractHitboxStreams(data, game);
 					break;
-				case 'GamingLive':
-					streams = extractGamingLiveStreams(data, game);
-					break;
 			}
 			ondata(streams);
 			
@@ -170,9 +164,6 @@ $(function() {
 					break;
 				case 'Hitbox':
 					more = (data.livestream ? true : false) && data.livestream.length === pagesize;
-					break;
-				case 'GamingLive':
-					more = false;
 					break;
 			}
 			
@@ -249,25 +240,6 @@ $(function() {
 					lastupdate: new Date().getTime()
 				});
 			}
-		}
-		return results;
-	}
-	
-	function extractGamingLiveStreams(data, game) {
-		var results = [];
-		for (var i = 0; i < data.channels.length; i++) {
-			var stream = data.channels[i];
-			results.push({
-				platform: 'GamingLive',
-				logo: 'http://cdn.gaminglive.tv/uploads/' + stream.owner + '/avatar/80x80.png',
-				name: stream.owner,
-				thumb: stream.state.thumbnailStatic,
-				game: game.name,
-				url: 'http://gmlv.tv/' + stream.slug,
-				desc: stream.name,
-				viewers: stream.state.viewers,
-				lastupdate: new Date().getTime()
-			});
 		}
 		return results;
 	}
@@ -475,9 +447,6 @@ $(function() {
 						case 'Hitbox':
 							fallback = 'http://www.hitbox.tv/static/img/live/no-tn.jpg';
 							break;
-						case 'GamingLive':
-							fallback = '/img/thumb.png';
-							break;
 					}
 					if (fallback) {
 						thumb.error(function() {
@@ -499,9 +468,6 @@ $(function() {
 							break;
 						case 'Hitbox':
 							fallback = '';
-							break;
-						case 'GamingLive':
-							fallback = 'http://www.gaminglive.tv/img/empty-avatar-80x80.jpg';
 							break;
 					}
 					if (fallback) {

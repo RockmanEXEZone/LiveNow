@@ -1,6 +1,6 @@
 Live Now
 ========
-Live Now is a web application written in jQuery that queries the Twitch, Hitbox and Gaming Live APIs and displays all live streams of Mega Man Battle Network or Mega Man Star Force games. All API requests are made from the user's browser, which also prevents abuse.
+Live Now is a web application written in jQuery that queries the Twitch and Hitbox APIs and displays all live streams of Mega Man Battle Network or Mega Man Star Force games. All API requests are made from the user's browser, which also prevents abuse.
 
 Live demo
 ---------
@@ -19,7 +19,7 @@ To embed Live Now on a web page:
 
 **LiveNow.initGames()** takes one parameter: an array of objects, where every object contains a **name** property containing your preferred name for the game, and an optional **boxart** property containing the URL for that game's boxart. If no boxart is specified, it is loaded from Twitch.
 
-**LiveNow.initQueue()** takes one parameter, which is an object. The first is the platform, which must be either "**Twitch**", "**Hitbox**" or "**GamingLive**". The second is an array of game objects, where every object contains a **id** property which is the index of said game in the **LiveNow.initGames()** call parameter, and an optional **key** property which contains the identifier for that game in the platform's API; if none is specified, the game's title from the **LiveNow.initGames()** call is used as its identifier. If a game has multiple API identifiers, then supply a game object for each with the same **id**, but different **key**.
+**LiveNow.initQueue()** takes one parameter, which is an object. The first is the platform, which must be either "**Twitch**" or "**Hitbox**". The second is an array of game objects, where every object contains a **id** property which is the index of said game in the **LiveNow.initGames()** call parameter, and an optional **key** property which contains the identifier for that game in the platform's API; if none is specified, the game's title from the **LiveNow.initGames()** call is used as its identifier. If a game has multiple API identifiers, then supply a game object for each with the same **id**, but different **key**.
 
 Tinycon support
 ---------------
@@ -86,22 +86,6 @@ Example
 			{ id: 12, key: 2567 },
 			{ id: 13, key: 16953 },
 			{ id: 14, key: 17652 }
-		]);
-
-		// Initialize Gaming Live queue.
-		LiveNow.initQueue("GamingLive", [
-			{ id: 0, key: "battle-network-rockman-exe" },
-			{ id: 3, key: "mega-man-battle-network-3" },
-			{ id: 4, key: "mega-man-battle-network-4-blue-moon" },
-			{ id: 6, key: "mega-man-battle-network-5-team-protoman" },
-			{ id: 6, key: "mega-man-battle-network-5-team-colonel" },
-			{ id: 7, key: "mega-man-battle-network-5-double-team" },
-			{ id: 9, key: "mega-man-battle-chip-challenge" },
-			{ id: 10, key: "mega-man-network-transmission" },
-			{ id: 12, key: "mega-man-star-force" },
-			{ id: 12, key: "megaman-star-force-dragon" },
-			{ id: 13, key: "mega-man-star-force-2" },
-			{ id: 14, key: "mega-man-star-force-3" }
 		]);
 	});
 </script>
