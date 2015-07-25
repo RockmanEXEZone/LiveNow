@@ -37,8 +37,8 @@ $(function() {
 			onsuccess(data);
 		}).fail(function(jqxhr) {
 			// Hitbox exception.
-			if (jqxhr.status === 404 && platform === 'Hitbox'
-				&& jqxhr.responseText === 'no_media_found') {
+			if (jqxhr.status === 404 && platform === 'Hitbox' && jqxhr.responseJSON
+				&& jqxhr.responseJSON.error_msg === 'no_media_found') {
 				onsuccess(jqxhr.responseText);
 			} else {
 				onerror();
@@ -141,7 +141,7 @@ $(function() {
 			offset: page * pagesize
 		}, function(data) {
 			// Check Hitbox empty return value.
-			if (platform === 'Hitbox' && data === 'no_media_found') {
+			if (platform === 'Hitbox' && data.error_msg === 'no_media_found') {
 				onend();
 				return;
 			}
@@ -169,7 +169,7 @@ $(function() {
 					more = page * pagesize < data._total;
 					break;
 				case 'Hitbox':
-					more = data.livestream.length === pagesize;
+					more = (data.livestream ? true : false) && data.livestream.length === pagesize;
 					break;
 				case 'GamingLive':
 					more = false;
@@ -234,7 +234,7 @@ $(function() {
 
 	function extractHitboxStreams(data, game) {
 		var results = [];
-		if (data !== 'no_media_found') {		
+		if (data.livestream) {
 			for (var i = 0; i < data.livestream.length; i++) {
 				var stream = data.livestream[i];
 				results.push({
