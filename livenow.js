@@ -519,14 +519,11 @@ $(function() {
 			
 			container.empty();
 			if (status) {
-				$('<p/>')
-				.attr('style', 'background: ' + (loaded >= total ?
-						'none !important' :
-						'transparent'
-					) +
-					';'
-				)
-				.css({
+				var statusElem = $('<p/>');
+				if (loaded >= total) {
+					statusElem.attr('style', 'background: none !important; ');
+				}
+				statusElem.css({
 					'overflow-x': 'visible',
 					'white-space': 'nowrap',
 					'padding': '2pt 5pt',
