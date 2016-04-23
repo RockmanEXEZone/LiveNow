@@ -40,6 +40,18 @@
 		.fade {
 			opacity: 0.3;
 		}
+		
+		#boktai {
+			display: inline-block;
+			cursor: pointer;
+			width: 28px;
+			height: 24px;
+			background: url('img/boktai.png');
+			background-size: cover;
+			background-position: 28px;
+			vertical-align: top;
+			border-top-right-radius: 7px;
+		}
 	</style>
 </head>
 <body>
@@ -47,7 +59,7 @@
 <div id="main">
 	<div style="float: left; width: 300px; margin-right: 10px; margin-bottom: 1em;">
 		<a href="http://www.therockmanexezone.com/"><img src="img/logo.png" width="300"></a>
-		<h1 style="margin: 0;">Live Now 2.1 <em style="font-style: italic; font-size: 50%; display: inline;">Beta</em></h1>
+		<h1 style="margin: 0;">Live Now 2.2 <em style="font-style: italic; font-size: 50%; display: inline;">Beta</em></h1>
 		<p style="margin: 0;">Checks for active Twitch and Hitbox streams of the Mega Man Battle Network and Mega Man Star Force games.</p>
 		<p>All API requests are made from your browser. The overview to the right automatically updates as long as you keep this tab open. <strong style="color: #EEE;">Therefore, avoid opening Live Now in more than one tab, and avoid refreshing constantly.</strong> If you do, it will result in more traffic going towards the APIs, meaning you may get throttled.</p>
 		<p>If your browser supports desktop notifications, you can get notified whenever a stream goes live. Also, if you pin this tab, it will start flashing when someone goes live or offline.</p>
@@ -55,7 +67,7 @@
 	</div>
 	<div class="tab beta" style="display: none;" style="color: #AAA">Try the beta? <a href="beta/" style="color: #AAA;">Click here.</a></div>
 	<div class="tab beta" style="display: block;">This is the beta. <a href="https://github.com/Prof9/livenow/issues/new" target="_blank" style="color: #AAA;">Find any errors?</a></div>
-	<div class="tab fade" style="position: fixed; right: 10pt; bottom: 0;">
+	<div class="tab fade" style="position: fixed; right: 10pt; bottom: 0; line-height: 24px;">
 		Style:
 		<select id="theme">
 			<option value="">Default</option>
@@ -65,11 +77,25 @@
 			<option value="megabuster">MegaBuster</option>
 			<option value="classic">Classic</option>
 		</select>
+		<div id="boktai" title="Boktai streams"></div>
 	</div>
 	<div style="max-width: 1200px; overflow-x: auto;">
 		<div id="livenow-container"></div>
 		<script type="text/javascript">
 			$(function() {
+				var passwords = [
+					{
+						keys: [ 84, 65, 73, 89, 79, 72 ],
+						name: 'boktai'
+					}, {
+						keys: [ 84, 65, 73, 89, 79, 85 ],
+						name: 'boktai'
+					}
+				];
+				for (var i = 0; i < passwords.length; i++) {
+					passwords[i].progress = 0;
+				}
+				
 				function getCookies() {
 					var cookies = {};
 					document.cookie.split(/;\s*/).forEach(function(e) {
@@ -120,6 +146,23 @@
 					}
 				});
 				
+				function toggleBoktai() {
+					var cookies = getCookies();
+					console.log(cookies.boktai);
+					if (cookies.boktai == 'true') {
+						cookies.boktai = 'true';
+						setCookie('boktai', 'false');
+						alert("Boktai streams disabled!");
+						location.reload();
+					} else {
+						cookies.boktai = 'true';
+						setCookie('boktai', 'true');
+						alert("Boktai streams enabled!");
+						location.reload();
+					}
+				}
+				$('#boktai').click(toggleBoktai);
+				
 				var cookies = getCookies();
 				if (cookies.theme) {
 					LiveNow.setTheme('thm/' + cookies.theme + '.css');
@@ -129,6 +172,25 @@
 					LiveNow.setTheme('thm/' + defaultTheme + '.css');
 					$('select#theme')[0].selectedIndex = 0;
 				}
+			
+				document.addEventListener('keydown', function(event) {
+					for (var i = 0; i < passwords.length; i++) {
+						var pw = passwords[i];
+						
+						if (event.keyCode !== pw.keys[pw.progress++]) {
+							pw.progress = 0;
+						}
+						if (pw.progress >= pw.keys.length) {
+							pw.progress = 0;
+							switch (pw.name) {
+								case 'boktai':
+									toggleBoktai();
+									break;
+							}
+						}
+					}
+					console.log(event.keyCode);
+				});
 				
 				// Initialize games.
 				LiveNow.initGames([
@@ -147,7 +209,11 @@
 					{ name: "Mega Man Star Force",							boxart: 'box/sf1.png' },
 					{ name: "Mega Man Star Force 2",						boxart: 'box/sf2.png' },
 					{ name: "Mega Man Star Force 3",						boxart: 'box/sf3.png' },
-					{ name: "Mega Man Battle Network Chrono X",				boxart: 'box/bncx.png' }
+					{ name: "Mega Man Battle Network Chrono X",				boxart: 'box/bncx.png' },
+					{ name: "Boktai: The Sun is in Your Hand",				boxart: 'box/bok1.png' },
+					{ name: "Boktai 2: Solar Boy Django",					boxart: 'box/bok2.png' },
+					{ name: "Shin Bokura no Taiyō: Gyakushū no Sabata",		boxart: 'box/bok3.png' },
+					{ name: "Lunar Knights",								boxart: 'box/bokds.png' }
 				]);
 				
 				// Initialize Twitch queue.
@@ -186,6 +252,25 @@
 					{ id: 13,	key: 16953 },
 					{ id: 14,	key: 17652 }
 				]);
+				
+				// Initialize Boktai queues.
+				if (cookies.boktai == 'true') {
+					$('#boktai').css({ backgroundPositionX: '0px', visibility: 'visible' });
+				
+					LiveNow.initQueue("Twitch", [
+						{ id: 16 },
+						{ id: 17 },
+						{ id: 18, key: "Shin Bokura no Taiyou Gyakushuu no Sabata" },
+						{ id: 19 },
+					]);
+					
+					LiveNow.initQueue("Hitbox", [
+						{ id: 16, key: 6876 },
+						{ id: 17, key: 12502 },
+						{ id: 18, key: 10350 },
+						{ id: 19, key: 6818 },
+					]);
+				}
 			});
 		</script>
 	</div>
