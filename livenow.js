@@ -208,6 +208,11 @@ $(function() {
 		var results = [];
 		for (var i = 0; i < data.streams.length; i++) {
 			var stream = data.streams[i];
+			
+			if (game.keys['Twitch'].indexOf(stream.game) === -1) {
+				continue;
+			}
+			
 			results.push({
 				platform: 'Twitch',
 				logo: stream.channel.logo || 'http://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_50x50.png',
@@ -228,6 +233,11 @@ $(function() {
 		if (data.livestream) {
 			for (var i = 0; i < data.livestream.length; i++) {
 				var stream = data.livestream[i];
+				
+				if (game.keys['Hitbox'].indexOf(stream.category_id) === -1) {
+					continue;
+				}
+				
 				results.push({
 					platform: 'Hitbox',
 					logo: 'http://edge.sf.hitbox.tv' + stream.channel.user_logo_small,
@@ -326,7 +336,7 @@ $(function() {
 			} else {
 				queue.games.splice(i--, 1);
 			}
-			game.keys[platform].push(next.key || game.name);
+			game.keys[platform].push((next.key || game.name).toString());
 		}
 		
 		for (var i = 0; i < queue.games.length; i++) {
