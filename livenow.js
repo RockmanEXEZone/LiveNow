@@ -17,12 +17,14 @@ $(function() {
 	//     stream.lastupdate = datetime of last update
 	//     stream.decay = decay value of stream (purged if 0)
 	
+	var twitchClientId = '';
+	
 	function getApi(platform, params, onsuccess, onerror) {		
 		// Set base URL and callback.
 		var url;
 		switch (platform) {
 			case 'Twitch':
-				url = 'https://api.twitch.tv/kraken/streams?callback=?';
+				url = 'https://api.twitch.tv/kraken/streams?client_id=' + twitchClientId + '&callback=?';
 				break;
 			case 'Hitbox':
 				url = 'http://api.hitbox.tv/media/live/list';
@@ -572,6 +574,9 @@ $(function() {
 	}
 	
 	window.LiveNow = {
+		setTwitchClientId: function(id) {
+			twitchClientId = id;
+		},
 		initGames: function(list) {
 			initGames(list);
 		},
