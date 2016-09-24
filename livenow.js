@@ -24,6 +24,7 @@ $(function() {
 		var url;
 		switch (platform) {
 			case 'Twitch':
+			case 'TwitchUser':
 				url = 'https://api.twitch.tv/kraken/streams?client_id=' + twitchClientId + '&callback=?';
 				break;
 			case 'Hitbox':
@@ -133,12 +134,33 @@ $(function() {
 		if (typeof pagesize === 'undefined') pagesize = 25;
 		if (typeof key === 'undefined') key = 0;
 		
+		var pars;
+		switch (platform) {
+			case 'Twitch':
+				pars = {
+					game: game.keys[platform][key],
+					limit: pagesize,
+					offset: page * pagesize
+				};
+				break;
+			case 'TwitchUser':
+				pars = {
+					channel: game.keys[platform][key],
+					limit: pagesize,
+					offset: page * pagesize
+				};
+				break;
+			case 'Hitbox':
+				pars = {
+					game: game.keys[platform][key],
+					limit: pagesize,
+					start: page * pagesize
+				};
+				break;
+		}
+		
 		// Make the API request.
-		getApi(platform, {
-			game: game.keys[platform][key],
-			limit: pagesize,
-			offset: page * pagesize
-		}, function(data) {
+		getApi(platform, pars, function(data) {
 			// Check Hitbox empty return value.
 			if (platform === 'Hitbox' && data.error_msg === 'no_media_found') {
 				onend();
@@ -149,12 +171,16 @@ $(function() {
 			var streams = [];
 			switch (platform) {
 				case 'Twitch':
-					streams = extractTwitchStreams(data, game);
+					streams = extractTwitchStreams(data, game, true);
+					break;
+				case 'TwitchUser':
+					streams = extractTwitchStreams(data, game, false);
 					break;
 				case 'Hitbox':
 					streams = extractHitboxStreams(data, game);
 					break;
 			}
+			streams = filterStreams(platform, streams, game)
 			ondata(streams);
 			
 			// Determine whether there are more pages to get.
@@ -162,6 +188,7 @@ $(function() {
 			var more = false;
 			switch (platform) {
 				case 'Twitch':
+				case 'TwitchUser':
 					more = page * pagesize < data._total;
 					break;
 				case 'Hitbox':
@@ -206,12 +233,12 @@ $(function() {
 		});
 	}
 	
-	function extractTwitchStreams(data, game) {
+	function extractTwitchStreams(data, game, checkGame) {
 		var results = [];
 		for (var i = 0; i < data.streams.length; i++) {
 			var stream = data.streams[i];
 			
-			if (game.keys['Twitch'].indexOf(stream.game) === -1) {
+			if (checkGame && game.keys['Twitch'].indexOf(stream.game) === -1) {
 				continue;
 			}
 			
@@ -252,6 +279,22 @@ $(function() {
 					lastupdate: new Date().getTime()
 				});
 			}
+		}
+		return results;
+	}
+	
+	function filterStreams(platform, streams, game) {
+		var results = [];
+		for (var i = 0; i < streams.length; i++) {
+			var stream = streams[i];
+			
+			if (typeof game.filters[platform] !== 'undefined') {
+				if (!game.filters[platform].test(stream.desc)) {
+					continue;
+				}
+			}
+			
+			results.push(stream);
 		}
 		return results;
 	}
@@ -313,7 +356,8 @@ $(function() {
 				name: game.name,
 				boxart: game.boxart,
 				loaded: [],
-				keys: []
+				keys: [],
+				filters: []
 			});
 		}
 		updateDocument();
@@ -333,12 +377,14 @@ $(function() {
 			
 			if (typeof game.keys[platform] === 'undefined') {
 				game.keys[platform] = [];
+				game.filters[platform] = [];
 				game.loaded[platform] = 0;
 				total++;
 			} else {
 				queue.games.splice(i--, 1);
 			}
 			game.keys[platform].push((next.key || game.name).toString());
+			game.filters[platform] = next.filter;
 		}
 		
 		for (var i = 0; i < queue.games.length; i++) {
