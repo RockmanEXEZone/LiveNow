@@ -154,7 +154,8 @@ $(function() {
 				pars = {
 					game: game.keys[platform][key],
 					limit: pagesize,
-					start: page * pagesize
+					start: page * pagesize,
+					fast: true
 				};
 				break;
 		}
@@ -262,10 +263,6 @@ $(function() {
 		if (data.livestream) {
 			for (var i = 0; i < data.livestream.length; i++) {
 				var stream = data.livestream[i];
-				
-				if (game.keys['Hitbox'].indexOf(stream.category_id) === -1) {
-					continue;
-				}
 				
 				results.push({
 					platform: 'Hitbox',
