@@ -224,27 +224,28 @@
 				
 				// Initialize games.
 				LiveNow.initGames([
-					{ name: "Mega Man Battle Network",						boxart: 'box/bn1.png' },
-					{ name: "Rockman EXE Operate Shooting Star",			boxart: 'box/exeoss.png' },
-					{ name: "Mega Man Battle Network 2",					boxart: 'box/bn2.png' },
-					{ name: "Mega Man Battle Network 3",					boxart: 'box/bn3.png' },
-					{ name: "Mega Man Battle Network 4",					boxart: 'box/bn4.png' },
-					{ name: "Rockman EXE 4.5 Real Operation",				boxart: 'box/exe45.png' },
-					{ name: "Mega Man Battle Network 5",					boxart: 'box/bn5.png' },
-					{ name: "Mega Man Battle Network 5: Double Team DS",	boxart: 'box/bn5ds.png' },
-					{ name: "Mega Man Battle Network 6",					boxart: 'box/bn6.png' },
-					{ name: "Mega Man Battle Chip Challenge",				boxart: 'box/bcc.png' },
-					{ name: "Mega Man Network Transmission",				boxart: 'box/nt.png' },
-					{ name: "Rockman EXE WS",								boxart: 'box/exews.png' },
-					{ name: "Mega Man Star Force",							boxart: 'box/sf1.png' },
-					{ name: "Mega Man Star Force 2",						boxart: 'box/sf2.png' },
-					{ name: "Mega Man Star Force 3",						boxart: 'box/sf3.png' },
-					{ name: "Mega Man Battle Network Chrono X",				boxart: 'box/bncx.png' },
-					{ name: "Boktai: The Sun is in Your Hand",				boxart: 'box/bok1.png' },
-					{ name: "Boktai 2: Solar Boy Django",					boxart: 'box/bok2.png' },
-					{ name: "Shin Bokura no Taiyō: Gyakushū no Sabata",		boxart: 'box/bok3.png' },
-					{ name: "Lunar Knights",								boxart: 'box/bokds.png' },
-					{ name: "Kura5: Bonds of the Undying",					boxart: 'box/kura5.png' },
+					{ name: "Mega Man Battle Network",						boxart: 'box/bn1.png' },	// 0
+					{ name: "Rockman EXE Operate Shooting Star",			boxart: 'box/exeoss.png' },	// 1
+					{ name: "Mega Man Battle Network 2",					boxart: 'box/bn2.png' },	// 2
+					{ name: "Mega Man Battle Network 3",					boxart: 'box/bn3.png' },	// 3
+					{ name: "Mega Man Battle Network 4",					boxart: 'box/bn4.png' },	// 4
+					{ name: "Rockman EXE 4.5 Real Operation",				boxart: 'box/exe45.png' },	// 5
+					{ name: "Mega Man Battle Network 5",					boxart: 'box/bn5.png' },	// 6
+					{ name: "Mega Man Battle Network 5: Double Team DS",	boxart: 'box/bn5ds.png' },	// 7
+					{ name: "Mega Man Battle Network 6",					boxart: 'box/bn6.png' },	// 8
+					{ name: "Mega Man Battle Chip Challenge",				boxart: 'box/bcc.png' },	// 9
+					{ name: "Mega Man Network Transmission",				boxart: 'box/nt.png' },		// 10
+					{ name: "Rockman EXE WS",								boxart: 'box/exews.png' },	// 11
+					{ name: "Mega Man Star Force",							boxart: 'box/sf1.png' },	// 12
+					{ name: "Mega Man Star Force 2",						boxart: 'box/sf2.png' },	// 13
+					{ name: "Mega Man Star Force 3",						boxart: 'box/sf3.png' },	// 14
+					{ name: "Mega Man Battle Network Chrono X",				boxart: 'box/bncx.png' },	// 15
+					{ name: "Mega Man Battle Network 3D",					boxart: 'box/bn3d.png' },	// 16
+					{ name: "Boktai: The Sun is in Your Hand",				boxart: 'box/bok1.png' },	// 17
+					{ name: "Boktai 2: Solar Boy Django",					boxart: 'box/bok2.png' },	// 18
+					{ name: "Shin Bokura no Taiyō: Gyakushū no Sabata",		boxart: 'box/bok3.png' },	// 19
+					{ name: "Lunar Knights",								boxart: 'box/bokds.png' },	// 20
+					{ name: "Kura5: Bonds of the Undying",					boxart: 'box/kura5.png' },	// 21
 				]);
 				
 				if (cookies.mmbn !== 'false') {
@@ -286,6 +287,11 @@
 						{ id: 13,	key: 16953 },
 						{ id: 14,	key: 17652 },
 					]);
+					
+					LiveNow.initQueue("PicartoUser", [
+						{ id: 16,	key: "heatphoenix",
+							filter: /3D.*((((Mega|Rock)\s*Man)|(\.?EXE|Battle\s*Network)|MMBN))|((((Mega|Rock)\s*Man)|(\.?EXE|Battle\s*Network)|MMBN)).*3D/ig },
+					]);
 				}
 				
 				// Initialize Boktai queues.
@@ -293,21 +299,21 @@
 					$('.stream-toggle-boktai').css({ backgroundPositionX: '0px', visibility: 'visible' });
 				
 					LiveNow.initQueue("Twitch", [
-						{ id: 16 },
 						{ id: 17 },
-						{ id: 18, key: "Shin Bokura no Taiyou Gyakushuu no Sabata" },
-						{ id: 19 },
+						{ id: 18 },
+						{ id: 19, key: "Shin Bokura no Taiyou Gyakushuu no Sabata" },
+						{ id: 20 },
 					]);
 					
 					LiveNow.initQueue("TwitchUser", [
-						{ id: 20, key: "CatsFromMars", filter: /Kura\s*5|Boktai\s*3D/ig },
+						{ id: 21, key: "CatsFromMars", filter: /Kura\s*5|Boktai\s*3D/ig },
 					]);
 					
 					LiveNow.initQueue("Hitbox", [
-						{ id: 16, key: 6876 },
-						{ id: 17, key: 12502 },
-						{ id: 18, key: 10350 },
-						{ id: 19, key: 6818 },
+						{ id: 17, key: 6876 },
+						{ id: 18, key: 12502 },
+						{ id: 19, key: 10350 },
+						{ id: 20, key: 6818 },
 					]);
 				}
 			});
