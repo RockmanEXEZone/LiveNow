@@ -8,7 +8,7 @@ $(function() {
 	}
 	
 	// Stream objects are passed around in the code below. These are the properties:
-	//     stream.platform = 'Twitch' or 'Hitbox'
+	//     stream.platform = 'Twitch', 'Hitbox' or 'Picarto'
 	//     stream.name = name of the streamer
 	//     stream.game = name of game
 	//     stream.desc = stream status/description
@@ -29,6 +29,12 @@ $(function() {
 				break;
 			case 'Hitbox':
 				url = 'http://api.hitbox.tv/media/live/list';
+				break;
+			case 'PicartoUser':
+				url = 'https://ptvappapi.picarto.tv/channel/' + params.channel;
+				// let me just go ahead and borrow this real quick
+				url += '?key=03e26294-b793-11e5-9a41-005056984bd4';
+				params = {};
 				break;
 		}
 		
@@ -158,6 +164,11 @@ $(function() {
 					fast: true
 				};
 				break;
+			case 'PicartoUser':
+				pars = {
+					channel: game.keys[platform][key]
+				};
+				break;
 		}
 		
 		// Make the API request.
@@ -180,6 +191,9 @@ $(function() {
 				case 'Hitbox':
 					streams = extractHitboxStreams(data, game);
 					break;
+				case 'PicartoUser':
+					streams = extractPicartoStreams(data, game);
+					break;
 			}
 			streams = filterStreams(platform, streams, game)
 			ondata(streams);
@@ -194,6 +208,9 @@ $(function() {
 					break;
 				case 'Hitbox':
 					more = (data.livestream ? true : false) && data.livestream.length === pagesize;
+					break;
+				case 'PicartoUser':
+					more = false;
 					break;
 			}
 			
@@ -236,24 +253,25 @@ $(function() {
 	
 	function extractTwitchStreams(data, game, checkGame) {
 		var results = [];
-		for (var i = 0; i < data.streams.length; i++) {
-			var stream = data.streams[i];
-			
-			if (checkGame && game.keys['Twitch'].indexOf(stream.game) === -1) {
-				continue;
+		if (data.streams) {
+			for (var i = 0; i < data.streams.length; i++) {
+				var stream = data.streams[i];
+				
+				if (checkGame && game.keys['Twitch'].indexOf(stream.game) === -1) {
+					continue;
+				}
+				
+				results.push({
+					platform: 'Twitch',
+					logo: stream.channel.logo || 'http://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_50x50.png',
+					name: stream.channel.display_name,
+					thumb: stream.preview.small,
+					game: game.name,
+					url: stream.channel.url,
+					desc: stream.channel.status,
+					viewers: stream.viewers,
+				});
 			}
-			
-			results.push({
-				platform: 'Twitch',
-				logo: stream.channel.logo || 'http://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_50x50.png',
-				name: stream.channel.display_name,
-				thumb: stream.preview.small,
-				game: game.name,
-				url: stream.channel.url,
-				desc: stream.channel.status,
-				viewers: stream.viewers,
-				lastupdate: new Date().getTime()
-			});
 		}
 		return results;
 	}
@@ -273,9 +291,27 @@ $(function() {
 					url: 'http://hitbox.tv/' + stream.media_name,
 					desc: stream.media_status,
 					viewers: stream.media_views,
-					lastupdate: new Date().getTime()
 				});
 			}
+		}
+		return results;
+	}
+	
+	function extractPicartoStreams(data, game) {
+		var results = [];
+		if (data.is_online) {
+			var stream = data;
+			
+			results.push({
+				platform: 'Picarto',
+				logo: stream.avatar_url,
+				name: stream.channel,
+				thumb: stream.thumbnail_url,
+				game: game.name,
+				url: 'https://picarto.tv/' + stream.channel,
+				desc: stream.channel_title,
+				viewers: stream.current_viewers,
+			});
 		}
 		return results;
 	}
@@ -284,6 +320,8 @@ $(function() {
 		var results = [];
 		for (var i = 0; i < streams.length; i++) {
 			var stream = streams[i];
+			
+			stream.lastupdate = new Date().getTime();
 			
 			if (typeof game.filters[platform] !== 'undefined') {
 				if (!game.filters[platform].test(stream.desc)) {
@@ -500,12 +538,17 @@ $(function() {
 							fallback = 'http://static-cdn.jtvnw.net/ttv-static/404_preview-80x50.jpg';
 							break;
 						case 'Hitbox':
-							fallback = 'http://www.hitbox.tv/static/img/live/no-tn.jpg';
+							fallback = 'http://www.hitbox.tv/img/video_fallback.png';
+							break;
+						case 'Picarto':
+							fallback = 'https://picarto.tv/images/missingthump.jpg';
 							break;
 					}
 					if (fallback) {
 						thumb.error(function() {
-							thumb.attr('src', fallback);
+							if (thumb.attr('src' != fallback) {
+								thumb.attr('src', fallback);
+							}
 						});
 						thumb.css('background', 'url(' + fallback + ')');
 						thumb.css('background-size', 'cover');
@@ -519,15 +562,20 @@ $(function() {
 					});
 					switch (stream.platform) {
 						case 'Twitch':
-							fallback = '';
+							fallback = 'http://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_50x50.png';
 							break;
 						case 'Hitbox':
+							fallback = '';
+							break;
+						case 'Picarto':
 							fallback = '';
 							break;
 					}
 					if (fallback) {
 						avatar.error(function() {
-							thumb.attr('src', fallback);
+							if (thumb.attr('src') != fallback) {
+								thumb.attr('src', fallback);
+							}
 						});
 						thumb.css('background', 'url(' + fallback + ')');
 						thumb.css('background-size', 'cover');
