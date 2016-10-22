@@ -546,7 +546,7 @@ $(function() {
 					}
 					if (fallback) {
 						thumb.error(function() {
-							if (thumb.attr('src' != fallback) {
+							if (thumb.attr('src') != fallback) {
 								thumb.attr('src', fallback);
 							}
 						});
