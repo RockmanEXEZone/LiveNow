@@ -72,7 +72,7 @@ $(function() {
 				// Check if stream has the same platform and game.
 				if (platform.substr(0, currentStreams[i].platform.length) == currentStreams[i].platform
 						&& currentStreams[i].game == game.name) {
-					if (currentStreams[i].decay-- == 0) {
+					if (--currentStreams[i].decay == 0) {
 						currentStreams.splice(i--, 1);
 					}
 				}
