@@ -72,9 +72,7 @@ $(function() {
 				// Check if stream has the same platform and game.
 				if (platform.substr(0, currentStreams[i].platform.length) == currentStreams[i].platform
 						&& currentStreams[i].game == game.name) {
-					if (--currentStreams[i].decay == 0) {
-						currentStreams.splice(i--, 1);
-					}
+					currentStreams[i].decay--;
 				}
 			}
 		}
@@ -110,7 +108,12 @@ $(function() {
 		}
 		
 		if (decay === true) {
-			//console.log(currentStreams.length + ' streams active.');
+			// Remove stale streams.
+			for (var i = 0; i < currentStreams.length; i++) {
+				if (currentStreams[i].decay == 0) {
+					currentStreams.splice(i--, 1);
+				}
+			}
 		}
 		
 		updateDocument();
