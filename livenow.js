@@ -25,6 +25,7 @@ $(function() {
 		switch (platform) {
 			case 'Twitch':
 			case 'TwitchUser':
+			case 'TwitchCommunity':
 				url = 'https://api.twitch.tv/kraken/streams?api_version=5&client_id=' + twitchClientId + '&callback=?';
 				break;
 			case 'Hitbox':
@@ -159,6 +160,13 @@ $(function() {
 					offset: page * pagesize
 				};
 				break;
+			case 'TwitchCommunity':
+				pars = {
+					community_id: game.keys[platform][key],
+					limit: pagesize,
+					offset: page * pagesize
+				};
+				break;
 			case 'Hitbox':
 				pars = {
 					game: game.keys[platform][key],
@@ -189,6 +197,7 @@ $(function() {
 					streams = extractTwitchStreams(data, game, true);
 					break;
 				case 'TwitchUser':
+				case 'TwitchCommunity':
 					streams = extractTwitchStreams(data, game, false);
 					break;
 				case 'Hitbox':
@@ -207,6 +216,7 @@ $(function() {
 			switch (platform) {
 				case 'Twitch':
 				case 'TwitchUser':
+				case 'TwitchCommunity':
 					more = page * pagesize < data._total;
 					break;
 				case 'Hitbox':
