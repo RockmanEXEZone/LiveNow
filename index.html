@@ -49,7 +49,7 @@
 			height: 24px;
 			background: url('img/buttons.png');
 			background-position-x: 28px;
-			background-size: 56px 48px;
+			background-size: 56px;
 			vertical-align: top;
 		}
 		
@@ -62,7 +62,11 @@
 		}
 		
 		.stream-toggle-boktai {
-			background-position-y: 24px;
+			background-position-y: -24px;
+		}
+		
+		.stream-toggle-trez {
+			background-position-y: -48px;
 		}
 	</style>
 </head>
@@ -91,6 +95,7 @@
 		</select>
 		<div class="stream-toggle stream-toggle-mmbn" title="Mega Man Battle Network streams"></div>
 		<div class="stream-toggle stream-toggle-boktai" title="Boktai streams"></div>
+		<div class="stream-toggle stream-toggle-trez" title="TREZ community streams"></div>
 	</div>
 	<div style="max-width: 1200px; overflow-x: auto;">
 		<div id="livenow-container"></div>
@@ -159,7 +164,7 @@
 					}
 				});
 				
-				function toggleMMBN() {
+				function toggleMmbn() {
 					var cookies = getCookies();
 					console.log(cookies.mmbn);
 					if (cookies.mmbn == 'false') {
@@ -174,7 +179,7 @@
 						location.reload();
 					}
 				}
-				$('.stream-toggle-mmbn').click(toggleMMBN);
+				$('.stream-toggle-mmbn').click(toggleMmbn);
 				
 				function toggleBoktai() {
 					var cookies = getCookies();
@@ -192,6 +197,23 @@
 					}
 				}
 				$('.stream-toggle-boktai').click(toggleBoktai);
+				
+				function toggleTrez() {
+					var cookies = getCookies();
+					console.log(cookies.trez);
+					if (cookies.trez == 'true') {
+						cookies.trez = 'false';
+						setCookie('trez', 'false');
+						alert("The Rockman EXE Zone community streams disabled!");
+						location.reload();
+					} else {
+						cookies.trez = 'true';
+						setCookie('trez', 'true');
+						alert("The Rockman EXE Zone community streams enabled!\nWelcome back!");
+						location.reload();
+					}
+				}
+				$('.stream-toggle-trez').click(toggleTrez);
 				
 				var cookies = getCookies();
 				if (cookies.theme) {
@@ -246,6 +268,7 @@
 					{ name: "Shin Bokura no Taiyō: Gyakushū no Sabata",		boxart: 'box/bok3.png' },	// 19
 					{ name: "Lunar Knights",								boxart: 'box/bokds.png' },	// 20
 					{ name: "Kura5: Bonds of the Undying",					boxart: 'box/kura5.png' },	// 21
+					{ name: "TREZ community streams",						boxart: 'box/trez.png' },	// 22
 				]);
 				
 				if (cookies.mmbn !== 'false') {
@@ -314,6 +337,14 @@
 						{ id: 18, key: 12502 },
 						{ id: 19, key: 10350 },
 						{ id: 20, key: 6818 },
+					]);
+				}
+				
+				if (cookies.trez !== 'false') {
+					$('.stream-toggle-trez').css({ backgroundPositionX: '0px', visibility: 'visible' });
+					
+					LiveNow.initQueue("TwitchCommunity", [
+						{ id: 22, key: "96eddd30-8133-49f5-a4ae-5ed98875a9d7" },
 					]);
 				}
 			});
