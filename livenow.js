@@ -419,7 +419,7 @@ $(function() {
 				return;
 			}
 			// Abort if team updated less than an hour ago.
-			if (Math.abs(communities[id].lastupdate - new Date().getTime()) < 3600000) {
+			if (Math.abs(teams[id].lastupdate - new Date().getTime()) < 3600000) {
 				return;
 			}
 		}
