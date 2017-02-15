@@ -276,9 +276,19 @@ $(function() {
 		if (data.streams) {
 			for (var i = 0; i < data.streams.length; i++) {
 				var stream = data.streams[i];
+				var gameName = game.name;
 				
-				if (checkGame && game.keys['Twitch'].indexOf(stream.game) === -1) {
-					continue;
+				if (checkGame) {
+					if (game.keys['Twitch'].indexOf(stream.game) === -1) {
+						continue;
+					}
+				} else {
+					for (var j = 0; j < games.length; j++) {
+						if (stream.game == games[j].name) {
+							gameName = games[j].name;
+							break;
+						}
+					}
 				}
 				
 				if (stream.community_id) {
@@ -293,7 +303,7 @@ $(function() {
 					logo: stream.channel.logo || 'http://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_50x50.png',
 					name: stream.channel.display_name,
 					thumb: stream.preview.small,
-					game: game.name,
+					game: gameName,
 					url: stream.channel.url,
 					desc: stream.channel.status,
 					viewers: stream.viewers,
