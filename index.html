@@ -184,15 +184,15 @@
 				function toggleBoktai() {
 					var cookies = getCookies();
 					console.log(cookies.boktai);
-					if (cookies.boktai == 'true') {
-						cookies.boktai = 'false';
-						setCookie('boktai', 'false');
-						alert("Boktai streams disabled!\nThe Sun will rise tomorrow...");
-						location.reload();
-					} else {
+					if (cookies.boktai == 'false') {
 						cookies.boktai = 'true';
 						setCookie('boktai', 'true');
 						alert("Boktai streams enabled!\nTAIYOOOOHHHH!!");
+						location.reload();
+					} else {
+						cookies.boktai = 'false';
+						setCookie('boktai', 'false');
+						alert("Boktai streams disabled!\nThe Sun will rise tomorrow...");
 						location.reload();
 					}
 				}
@@ -201,15 +201,15 @@
 				function toggleTrez() {
 					var cookies = getCookies();
 					console.log(cookies.trez);
-					if (cookies.trez == 'true') {
-						cookies.trez = 'false';
-						setCookie('trez', 'false');
-						alert("The Rockman EXE Zone community streams disabled!");
-						location.reload();
-					} else {
+					if (cookies.trez == 'false') {
 						cookies.trez = 'true';
 						setCookie('trez', 'true');
 						alert("The Rockman EXE Zone community streams enabled!\nWelcome back!");
+						location.reload();
+					} else {
+						cookies.trez = 'false';
+						setCookie('trez', 'false');
+						alert("The Rockman EXE Zone community streams disabled!");
 						location.reload();
 					}
 				}
@@ -318,7 +318,7 @@
 				}
 				
 				// Initialize Boktai queues.
-				if (cookies.boktai == 'true') {
+				if (cookies.boktai !== 'false') {
 					$('.stream-toggle-boktai').css({ backgroundPositionX: '0px', visibility: 'visible' });
 				
 					LiveNow.initQueue("Twitch", [
