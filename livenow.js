@@ -25,7 +25,7 @@ $(function() {
 		switch (platform) {
 			case 'Twitch':
 			case 'TwitchUser':
-				url = 'https://api.twitch.tv/kraken/streams?client_id=' + twitchClientId + '&callback=?';
+				url = 'https://api.twitch.tv/kraken/streams?api_version=5&client_id=' + twitchClientId + '&callback=?';
 				break;
 			case 'Hitbox':
 				url = 'http://api.hitbox.tv/media/live/list';
