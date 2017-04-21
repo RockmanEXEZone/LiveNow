@@ -29,7 +29,7 @@ $(function() {
 				url = 'https://api.twitch.tv/kraken/streams?api_version=5&client_id=' + twitchClientId + '&callback=?';
 				break;
 			case 'Hitbox':
-				url = 'http://api.hitbox.tv/media/live/list';
+				url = 'https://api.hitbox.tv/media/live/list';
 				break;
 			case 'PicartoUser':
 				url = 'https://ptvappapi.picarto.tv/channel/' + params.channel;
@@ -300,7 +300,7 @@ $(function() {
 				
 				results.push({
 					platform: 'Twitch',
-					logo: stream.channel.logo || 'http://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_50x50.png',
+					logo: stream.channel.logo || 'https://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_50x50.png',
 					name: stream.channel.display_name,
 					thumb: stream.preview.small,
 					game: gameName,
@@ -323,11 +323,11 @@ $(function() {
 				
 				results.push({
 					platform: 'Hitbox',
-					logo: 'http://edge.sf.hitbox.tv' + stream.channel.user_logo_small,
+					logo: 'https://edge.sf.hitbox.tv' + stream.channel.user_logo_small,
 					name: stream.media_display_name,
-					thumb: 'http://edge.sf.hitbox.tv' + stream.media_thumbnail,
+					thumb: 'https://edge.sf.hitbox.tv' + stream.media_thumbnail,
 					game: game.name,
-					url: 'http://hitbox.tv/' + stream.media_name,
+					url: 'https://hitbox.tv/' + stream.media_name,
 					desc: stream.media_status,
 					viewers: stream.media_views,
 					community: null,
@@ -581,7 +581,7 @@ $(function() {
 	function getAvatarFallback(platform) {
 		switch (platform) {
 			case 'Twitch':
-				return 'http://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_50x50.png';
+				return 'https://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_50x50.png';
 			default:
 				return '';
 		}
@@ -590,9 +590,9 @@ $(function() {
 	function getThumbFallback(platform) {
 		switch (platform) {
 			case 'Twitch':
-				return 'http://static-cdn.jtvnw.net/ttv-static/404_preview-80x50.jpg';
+				return 'https://static-cdn.jtvnw.net/ttv-static/404_preview-80x50.jpg';
 			case 'Hitbox':
-				return 'http://www.hitbox.tv/img/video_fallback.png';
+				return 'https://www.hitbox.tv/img/video_fallback.png';
 			case 'Picarto':
 				return 'https://picarto.tv/images/missingthump.jpg';
 			default:
@@ -698,7 +698,7 @@ $(function() {
 					if (typeof desc === 'undefined') {
 						desc = '';
 					}
-					desc = desc.replace(url_regex, "<a href=\"http://$1\" target=\"_blank\">$&</a>");
+					desc = desc.replace(url_regex, "<a href=\"//$1\" target=\"_blank\">$&</a>");
 					
 					var communityA = '';
 					var teamA = '';
