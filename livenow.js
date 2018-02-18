@@ -447,7 +447,8 @@ $(function() {
 					logo: data.teams[0].logo,
 					name: data.teams[0].display_name,
 					url: 'https://www.twitch.tv/team/' + data.teams[0].name,
-					desc: 'Team',
+					// Get first sentence of info, otherwise cut off at 500 chars if not possible.
+					desc: ((data.teams[0].info.split(/(?<=[\.\!\?\u3002])\s|$/g)[0]) || 'Team').substr(0, 500),
 					lastupdate: new Date().getTime(),
 					pending: false,
 				}
