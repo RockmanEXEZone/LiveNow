@@ -815,7 +815,7 @@ $(function() {
 							a.clone().append(
 								$('<strong/>').html(stream.name)
 							)
-						),
+						).css('white-space', 'nowrap'),
 						// Thumbnail cell
 						$('<td/>').append(
 							a.clone().append(thumb)
