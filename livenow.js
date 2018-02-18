@@ -291,8 +291,15 @@ $(function() {
 					}
 				}
 				
-				if (stream.community_id) {
+				var community = [];
+				if (stream.community_ids) {
+					for (var j = 0; j < stream.community_ids.length; j++) {
+						getTwitchCommunity(stream.community_ids[j]);
+					}
+					community = stream.community_ids;
+				} else if (stream.community_id) {
 					getTwitchCommunity(stream.community_id);
+					community = [stream.community_id];
 				}
 				if (stream.channel._id) {
 					getTwitchTeam(stream.channel._id)
@@ -307,7 +314,7 @@ $(function() {
 					url: stream.channel.url,
 					desc: stream.channel.status,
 					viewers: stream.viewers,
-					community: stream.community_id,
+					community: community,
 					team: stream.channel._id,
 				});
 			}
@@ -330,7 +337,7 @@ $(function() {
 					url: 'https://hitbox.tv/' + stream.media_name,
 					desc: stream.media_status,
 					viewers: stream.media_views,
-					community: null,
+					community: [],
 					team: null,
 				});
 			}
@@ -352,7 +359,7 @@ $(function() {
 				url: 'https://picarto.tv/' + stream.channel,
 				desc: stream.channel_title,
 				viewers: stream.current_viewers,
-				community: null,
+				community: [],
 				team: null,
 			});
 		}
@@ -700,32 +707,34 @@ $(function() {
 					}
 					desc = desc.replace(url_regex, "<a href=\"//$1\" target=\"_blank\">$&</a>");
 					
-					var communityA = '';
+					var communityA = [];
 					var teamA = '';
 					
 					// Add community.
-					if (stream.community && communities[stream.community] && !communities[stream.community].pending) {
-						var community = communities[stream.community];
-						
-						communityA = $('<a/>', {
-							href: community.url,
-							target: '_blank',
-							title: community.desc
-						}).append(
-							$('<img/>', {
-								src: community.logo || getCommunityFallback(),
-								width: 12,
-								height: 16
-							}).error(function() {
-								if ($(this).attr('src') != getCommunityFallback()) {
-									$(this).attr('src', getCommunityFallback());
-								}
-							}),
-							$('<span/>').css({
-								'font-size': 'smaller',
-								'font-weight': 'bold'
-							}).html(' ' + community.name)
-						);
+					for (var k = 0; k < stream.community.length; k++) {
+						if (communities[stream.community[k]] && !communities[stream.community[k]].pending) {
+							var community = communities[stream.community[k]];
+							
+							communityA.push($('<a/>', {
+								href: community.url,
+								target: '_blank',
+								title: community.desc
+							}).append(
+								$('<img/>', {
+									src: community.logo || getCommunityFallback(),
+									width: 12,
+									height: 16
+								}).error(function() {
+									if ($(this).attr('src') != getCommunityFallback()) {
+										$(this).attr('src', getCommunityFallback());
+									}
+								}),
+								$('<span/>').css({
+									'font-size': 'smaller',
+									'font-weight': 'bold'
+								}).html(' ' + community.name)
+							).css('margin', '0 8px 0 0'));
+						}
 					}
 					
 					// Add team.
@@ -750,7 +759,7 @@ $(function() {
 								'font-size': 'smaller',
 								'font-weight': 'bold'
 							}).html(' ' + team.name)
-						);
+						).css('margin', '0 8px 0 0');
 					}
 					
 					var descIcons = $('<div/>').append(
