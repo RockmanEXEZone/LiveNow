@@ -398,7 +398,7 @@ $(function() {
 		}, function(data) {
 			communities[id] = {
 				logo: data.avatar_image_url,
-				name: data.name,
+				name: data.display_name,
 				url: 'https://www.twitch.tv/communities/' + data.name,
 				desc: data.summary,
 				lastupdate: new Date().getTime(),
