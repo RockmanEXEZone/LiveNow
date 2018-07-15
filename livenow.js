@@ -191,6 +191,7 @@ $(function() {
 				pars = {
 					channel: game.keys[platform][key]
 				};
+				break;
 			case 'Mixer':
 				pars = {
 					type: game.keys[platform][key],
