@@ -106,19 +106,6 @@
 		<div id="livenow-container"></div>
 		<script type="text/javascript">
 			$(function() {
-				var passwords = [
-					{
-						keys: [ 84, 65, 73, 89, 79, 72 ],
-						name: 'boktai'
-					}, {
-						keys: [ 84, 65, 73, 89, 79, 85 ],
-						name: 'boktai'
-					}
-				];
-				for (var i = 0; i < passwords.length; i++) {
-					passwords[i].progress = 0;
-				}
-				
 				function getCookies() {
 					var cookies = {};
 					document.cookie.split(/;\s*/).forEach(function(e) {
@@ -175,7 +162,7 @@
 					if (cookies.mmbn == 'false') {
 						cookies.mmbn = 'true';
 						setCookie('mmbn', 'true');
-						alert("Mega Man Battle Network streams enabled!\nJack in!! MegaMan, execute!");
+						alert("Mega Man Battle Network streams enabled!\nJack in! MegaMan, Execute!!");
 						location.reload();
 					} else {
 						cookies.mmbn = 'false';
@@ -197,7 +184,7 @@
 					} else {
 						cookies.mmsf = 'false';
 						setCookie('mmsf', 'false');
-						alert("Mega Man Star Force streams disabled!");
+						alert("Mega Man Star Force streams disabled!\nWho needs friends?");
 						location.reload();
 					}
 				}
@@ -246,25 +233,6 @@
 					LiveNow.setTheme('thm/' + defaultTheme + '.css');
 					$('select#theme')[0].selectedIndex = 0;
 				}
-			
-				document.addEventListener('keydown', function(event) {
-					for (var i = 0; i < passwords.length; i++) {
-						var pw = passwords[i];
-						
-						if (event.keyCode !== pw.keys[pw.progress++]) {
-							pw.progress = 0;
-						}
-						if (pw.progress >= pw.keys.length) {
-							pw.progress = 0;
-							switch (pw.name) {
-								case 'boktai':
-									toggleBoktai();
-									break;
-							}
-						}
-					}
-					console.log(event.keyCode);
-				});
 				
 				// Initialize games.
 				LiveNow.initGames([
@@ -332,6 +300,29 @@
 					LiveNow.initQueue("PicartoUser", [
 						{ id: 16,	key: "heatphoenix",
 							filter: /3D.*((((Mega|Rock)\s*Man)|(\.?EXE|Battle\s*Network)|MMBN))|((((Mega|Rock)\s*Man)|(\.?EXE|Battle\s*Network)|MMBN)).*3D/i },
+					]);
+					
+					LiveNow.initQueue("Mixer", [
+						{ id: 0,	key: 127872 },
+						{ id: 1,	key: 128913 },
+						{ id: 2,	key: 119544 },
+						{ id: 3,	key: 127824 },
+						{ id: 4,	key: 127857 },
+						{ id: 5,	key: 117753 },
+						{ id: 6,	key: 127827 },
+						{ id: 7,	key: 127725 },
+						{ id: 8,	key: 127842 },
+						{ id: 9,	key: 127884 },
+						{ id: 10,	key: 105354 },
+						{ id: 11,	key: 118170 },
+						{ id: 12,	key: 128871 },
+						{ id: 13,	key: 67950 },
+						{ id: 14,	key: 128940 },
+						{ id: 15,	key: 549847 },
+						{ id: 17,	key: 16179 },
+						{ id: 18,	key: 18066 },
+						{ id: 19,	key: 124371 },
+						{ id: 20,	key: 96264 },
 					]);
 				}
 				
