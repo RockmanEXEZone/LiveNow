@@ -836,7 +836,8 @@ $(function() {
 							}
 						}).css({
 							'background': 'url(' + getThumbFallback(stream.platform) + ')',
-							'background-size': 'cover'
+							'background-size': 'cover',
+							'background-position': 'center'
 						});
 					}
 					
