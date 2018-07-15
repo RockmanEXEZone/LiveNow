@@ -779,8 +779,8 @@ $(function() {
 					});
 					if (getThumbFallback(stream.platform)) {
 						thumb.error(function() {
-							if (($this).attr('src') != getThumbFallback(stream.platform)) {
-								($this).attr('src', getThumbFallback(stream.platform));
+							if (this.src != getThumbFallback(stream.platform)) {
+								this.src = getThumbFallback(stream.platform);
 							}
 						}).css({
 							'background': 'url(' + getThumbFallback(stream.platform) + ')',
