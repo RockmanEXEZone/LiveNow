@@ -1,10 +1,10 @@
 Live Now
 ========
-Live Now is a web application written in jQuery that queries the Twitch and Hitbox APIs and displays all live streams of Mega Man Battle Network or Mega Man Star Force games. All API requests are made from the user's browser, which also prevents abuse.
+Live Now is a web application written in jQuery that queries the Twitch, Smashcast, Mixer and Picarto APIs and displays all live streams of a set of predefined games, communities or specific users. All API requests are made from the user's browser.
 
 Live demo
 ---------
-A live demo of the application can be found at http://www.therockmanexezone.com/livenow/.
+A live demo of the application can be found at https://www.therockmanexezone.com/livenow/.
 
 Usage
 -----
@@ -20,6 +20,8 @@ To embed Live Now on a web page:
 **LiveNow.initGames()** takes one parameter: an array of objects, where every object contains a **name** property containing your preferred name for the game, and an optional **boxart** property containing the URL for that game's boxart. If no boxart is specified, it is loaded from Twitch.
 
 **LiveNow.initQueue()** takes two parameters. The first is the platform, which must be either "**Twitch**" or "**Hitbox**". The second is an array of game objects, where every object contains a **id** property which is the index of said game in the **LiveNow.initGames()** call parameter, and an optional **key** property which contains the identifier for that game in the platform's API; if none is specified, the game's title from the **LiveNow.initGames()** call is used as its identifier. If a game has multiple API identifiers, then supply a game object for each with the same **id**, but different **key**.
+
+Optionally, you can specify a exclusion regex using **LiveNow.setExcludeTagRegex()**. Any stream for which the description matches this regex will not be included in the stream listing. In addition, any stream containing `[nolivenow]` will also be hidden across all Live Now instances (starting from v2.8).
 
 Tinycon support
 ---------------
@@ -71,8 +73,8 @@ Example
 			{ id: 15 }
 		]);
         
-		// Initialize Hitbox queue.
-		LiveNow.initQueue("Hitbox", [
+		// Initialize Smashcast queue.
+		LiveNow.initQueue("Smashcast", [
 			{ id: 0, key: 7705 },
 			{ id: 1, key: 21710 },
 			{ id: 2, key: 5312 },
@@ -87,6 +89,23 @@ Example
 			{ id: 13, key: 16953 },
 			{ id: 14, key: 17652 }
 		]);
+		
+		// Initialize Mixer queue.
+		LiveNow.initQueue("Mixer", [
+			{ id: 0, key: 127872 },
+			{ id: 1, key: 128913 },
+			{ id: 2, key: 119544 },
+			{ id: 3, key: 127824 },
+			{ id: 4, key: 127857 },
+			{ id: 5, key: 117753 },
+			{ id: 6, key: 127827 },
+			{ id: 7, key: 127725 },
+			{ id: 8, key: 127842 },
+			{ id: 9, key: 127884 },
+			{ id: 10, key: 105354 },
+			{ id: 11, key: 118170 },
+			{ id: 15, key: 549847 }
+		]);
 	});
 </script>
 ```
@@ -98,9 +117,9 @@ Notes
 
 Credits
 =======
-**Live Now © 2014 - 2015 Prof. 9**
+**Live Now © 2014 - 2018 Prof. 9**
 
-Mega Man, Mega Man Battle Network and Mega Man Star Force are © Capcom 1987-2015.
+Mega Man, Mega Man Battle Network and Mega Man Star Force are © Capcom 1987-2018.
 
 All rights belong to their respective owners.
 
