@@ -18,6 +18,7 @@ $(function() {
 	//     stream.decay = decay value of stream (purged if 0)
 	
 	var twitchClientId = '';
+	var excludeTagRegex = null;
 	
 	function getApi(platform, params, onsuccess, onerror) {		
 		// Set base URL and callback.
@@ -480,6 +481,10 @@ $(function() {
 				}
 			}
 			
+			if ((excludeTagRegex && stream.desc.match(excludeTagRegex)) || stream.desc.match(/\[nolivenow\]/i)) {
+				continue;
+			}
+			
 			results.push(stream);
 		}
 		return results;
@@ -915,6 +920,9 @@ $(function() {
 				updateDocument();
 			}
 			paused = value;
+		},
+		setExcludeTagRegex: function(regex) {
+			excludeTagRegex = regex;
 		}
 	}
 });
