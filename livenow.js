@@ -488,12 +488,16 @@ $(function() {
 			client_id: twitchClientId
 		}, function(data) {
 			if (data.teams && data.teams[0]) {
+				var teamDesc = data.teams[0].info;
+				if (teamDesc.length > 500) {
+					teamDesc = teamDesc.substr(0, 500) + '...';
+				}
+				
 				teams[id] = {
 					logo: data.teams[0].logo,
 					name: data.teams[0].display_name,
 					url: 'https://www.twitch.tv/team/' + data.teams[0].name,
-					// Get first sentence of info, otherwise cut off at 500 chars if not possible.
-					desc: ((data.teams[0].info.split(/(?<=[\.\!\?\u3002])\s|$/g)[0]) || 'Team').substr(0, 500),
+					desc: teamDesc,
 					lastupdate: new Date().getTime(),
 					pending: false,
 				}
