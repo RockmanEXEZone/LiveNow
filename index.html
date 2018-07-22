@@ -72,6 +72,10 @@
 		.stream-toggle-trez {
 			background-position-y: -72px;
 		}
+		
+		.stream-toggle-indie {
+			background-position-y: -120px;
+		}
 	</style>
 </head>
 <body>
@@ -100,6 +104,7 @@
 		<div class="stream-toggle stream-toggle-mmbn" title="Mega Man Battle Network streams"></div>
 		<div class="stream-toggle stream-toggle-mmsf" title="Mega Man Star Force streams"></div>
 		<div class="stream-toggle stream-toggle-boktai" title="Boktai streams"></div>
+		<div class="stream-toggle stream-toggle-indie" title="Indie games streams"></div>
 		<div class="stream-toggle stream-toggle-trez" title="TREZ community streams"></div>
 	</div>
 	<div style="max-width: 1200px; overflow-x: auto;">
@@ -207,6 +212,23 @@
 				}
 				$('.stream-toggle-boktai').click(toggleBoktai);
 				
+				function toggleIndie() {
+					var cookies = getCookies();
+					console.log(cookies.indie);
+					if (cookies.indie == 'false') {
+						cookies.indie = 'true';
+						setCookie('indie', 'true');
+						alert("Indie streams enabled!\nTremendous power lies inside of the Indie Fragment...");
+						location.reload();
+					} else {
+						cookies.indie = 'false';
+						setCookie('indie', 'false');
+						alert("Indie streams disabled!\nYour Link Power means nothing...");
+						location.reload();
+					}
+				}
+				$('.stream-toggle-indie').click(toggleIndie);
+				
 				function toggleTrez() {
 					var cookies = getCookies();
 					console.log(cookies.trez);
@@ -238,30 +260,32 @@
 				
 				// Initialize games.
 				LiveNow.initGames([
-					{ name: "Mega Man Battle Network",						boxart: 'box/bn1.png' },	// 0
-					{ name: "Rockman EXE: Operate Shooting Star",			boxart: 'box/exeoss.png' },	// 1
-					{ name: "Mega Man Battle Network 2",					boxart: 'box/bn2.png' },	// 2
-					{ name: "Mega Man Battle Network 3",					boxart: 'box/bn3.png' },	// 3
-					{ name: "Mega Man Battle Network 4",					boxart: 'box/bn4.png' },	// 4
-					{ name: "Rockman EXE 4.5: Real Operation",				boxart: 'box/exe45.png' },	// 5
-					{ name: "Mega Man Battle Network 5",					boxart: 'box/bn5.png' },	// 6
-					{ name: "Mega Man Battle Network 5: Double Team DS",	boxart: 'box/bn5ds.png' },	// 7
-					{ name: "Mega Man Battle Network 6",					boxart: 'box/bn6.png' },	// 8
-					{ name: "Mega Man Battle Chip Challenge",				boxart: 'box/bcc.png' },	// 9
-					{ name: "Mega Man Network Transmission",				boxart: 'box/nt.png' },		// 10
-					{ name: "Rockman EXE WS",								boxart: 'box/exews.png' },	// 11
-					{ name: "Mega Man Star Force",							boxart: 'box/sf1.png' },	// 12
-					{ name: "Mega Man Star Force 2",						boxart: 'box/sf2.png' },	// 13
-					{ name: "Mega Man Star Force 3",						boxart: 'box/sf3.png' },	// 14
-					{ name: "Mega Man Battle Network: Chrono X",			boxart: 'box/bncx.png' },	// 15
-					{ name: "Mega Man Battle Network 3D",					boxart: 'box/bn3d.png' },	// 16
-					{ name: "Boktai: The Sun is in Your Hand",				boxart: 'box/bok1.png' },	// 17
-					{ name: "Boktai 2: Solar Boy Django",					boxart: 'box/bok2.png' },	// 18
-					{ name: "Shin Bokura no Taiyō: Gyakushū no Sabata",		boxart: 'box/bok3.png' },	// 19
-					{ name: "Lunar Knights",								boxart: 'box/bokds.png' },	// 20
-					{ name: "Kura5: Bonds of the Undying",					boxart: 'box/kura5.png' },	// 21
-					{ name: "TREZ community streams",						boxart: 'box/trez.png' },	// 22
+					{ name: "Mega Man Battle Network",						boxart: 'box/bn1.png' },		// 0
+					{ name: "Rockman EXE: Operate Shooting Star",			boxart: 'box/exeoss.png' },		// 1
+					{ name: "Mega Man Battle Network 2",					boxart: 'box/bn2.png' },		// 2
+					{ name: "Mega Man Battle Network 3",					boxart: 'box/bn3.png' },		// 3
+					{ name: "Mega Man Battle Network 4",					boxart: 'box/bn4.png' },		// 4
+					{ name: "Rockman EXE 4.5: Real Operation",				boxart: 'box/exe45.png' },		// 5
+					{ name: "Mega Man Battle Network 5",					boxart: 'box/bn5.png' },		// 6
+					{ name: "Mega Man Battle Network 5: Double Team DS",	boxart: 'box/bn5ds.png' },		// 7
+					{ name: "Mega Man Battle Network 6",					boxart: 'box/bn6.png' },		// 8
+					{ name: "Mega Man Battle Chip Challenge",				boxart: 'box/bcc.png' },		// 9
+					{ name: "Mega Man Network Transmission",				boxart: 'box/nt.png' },			// 10
+					{ name: "Rockman EXE WS",								boxart: 'box/exews.png' },		// 11
+					{ name: "Mega Man Star Force",							boxart: 'box/sf1.png' },		// 12
+					{ name: "Mega Man Star Force 2",						boxart: 'box/sf2.png' },		// 13
+					{ name: "Mega Man Star Force 3",						boxart: 'box/sf3.png' },		// 14
+					{ name: "Mega Man Battle Network: Chrono X",			boxart: 'box/bncx.png' },		// 15
+					{ name: "Mega Man Battle Network 3D",					boxart: 'box/bn3d.png' },		// 16
+					{ name: "Boktai: The Sun is in Your Hand",				boxart: 'box/bok1.png' },		// 17
+					{ name: "Boktai 2: Solar Boy Django",					boxart: 'box/bok2.png' },		// 18
+					{ name: "Shin Bokura no Taiyō: Gyakushū no Sabata",		boxart: 'box/bok3.png' },		// 19
+					{ name: "Lunar Knights",								boxart: 'box/bokds.png' },		// 20
+					{ name: "Kura5: Bonds of the Undying",					boxart: 'box/kura5.png' },		// 21
+					{ name: "TREZ community streams",						boxart: 'box/trez.png' },		// 22
 					{ name: "Test game",									boxart: 'box/trez.png' },		// 23
+					{ name: "EndCycle",										boxart: 'box/endcycle.png' },	// 24
+					{ name: "Tri Wing",										boxart: 'box/triwing.png' },	// 25
 				]);
 				
 				// Initialize Mega Man Star Force streams.
@@ -379,6 +403,16 @@
 						{ id: 18,	key: 18066 },
 						{ id: 19,	key: 124371 },
 						{ id: 20,	key: 96264 },
+					]);
+				}
+				
+				if (cookies.indie !== 'false') {
+					$('.stream-toggle-indie').css({ backgroundPositionX: '0px', visibility: 'visible' });
+					
+					// Initialize Twitch queue.
+					LiveNow.initQueue("Twitch", [
+						{ id: 24 }, // 495507
+						{ id: 25 }, // 503958
 					]);
 				}
 				
