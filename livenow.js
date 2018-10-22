@@ -26,7 +26,6 @@ $(function() {
 		switch (platform) {
 			case 'Twitch':
 			case 'TwitchUser':
-			case 'TwitchCommunity':
 				url = 'https://api.twitch.tv/kraken/streams?api_version=5&client_id=' + twitchClientId + '&callback=?';
 				break;
 			case 'Smashcast':
@@ -62,8 +61,6 @@ $(function() {
 	var currentStreams = [];
 	// The games list.
 	var games = [];
-	// Twitch communities loaded.
-	var communities = {};
 	// Twitch teams loaded.
 	var teams = {};
 	// Amount of games loaded.
@@ -172,13 +169,6 @@ $(function() {
 					offset: page * pagesize
 				};
 				break;
-			case 'TwitchCommunity':
-				pars = {
-					community_id: game.keys[platform][key],
-					limit: pagesize,
-					offset: page * pagesize
-				};
-				break;
 			case 'Smashcast':
 				pars = {
 					game: game.keys[platform][key],
@@ -216,7 +206,6 @@ $(function() {
 					streams = extractTwitchStreams(data, game, true);
 					break;
 				case 'TwitchUser':
-				case 'TwitchCommunity':
 					streams = extractTwitchStreams(data, game, false);
 					break;
 				case 'Smashcast':
@@ -238,7 +227,6 @@ $(function() {
 			switch (platform) {
 				case 'Twitch':
 				case 'TwitchUser':
-				case 'TwitchCommunity':
 					more = page * pagesize < data._total;
 					break;
 				case 'Smashcast':
@@ -309,16 +297,6 @@ $(function() {
 					}
 				}
 				
-				var community = [];
-				if (stream.community_ids) {
-					for (var j = 0; j < stream.community_ids.length; j++) {
-						getTwitchCommunity(stream.community_ids[j]);
-					}
-					community = stream.community_ids;
-				} else if (stream.community_id) {
-					getTwitchCommunity(stream.community_id);
-					community = [stream.community_id];
-				}
 				if (stream.channel._id) {
 					getTwitchTeam(stream.channel._id)
 				}
@@ -332,7 +310,6 @@ $(function() {
 					url: stream.channel.url,
 					desc: stream.channel.status,
 					viewers: stream.viewers,
-					community: community,
 					team: stream.channel._id,
 				});
 			}
@@ -355,7 +332,6 @@ $(function() {
 					url: 'https://www.smashcast.tv/' + stream.media_name,
 					desc: stream.media_status,
 					viewers: stream.media_views,
-					community: [],
 					team: null,
 				});
 			}
@@ -377,7 +353,6 @@ $(function() {
 				url: 'https://picarto.tv/' + stream.channel,
 				desc: stream.channel_title,
 				viewers: stream.current_viewers,
-				community: [],
 				team: null,
 			});
 		}
@@ -403,63 +378,11 @@ $(function() {
 					url: 'https://mixer.com/' + stream.token,
 					desc: stream.name,
 					viewers: stream.viewersCurrent,
-					community: [],
 					team: null,
 				});
 			}
 		}
 		return results;
-	}
-	
-	function getTwitchCommunity(id, tries) {
-		if (typeof tries === 'undefined') tries = 2;
-		
-		// Ignore invalid IDs.
-		if (!id) {
-			return;
-		}
-		
-		if (typeof communities[id] !== 'undefined') {
-			// Abort if community already pending.
-			if (communities[id].pending) {
-				return;
-			}
-			// Abort if community updated less than an hour ago.
-			if (Math.abs(communities[id].lastupdate - new Date().getTime()) < 3600000) {
-				return;
-			}
-		}
-		
-		// Add community stub.
-		communities[id] = {
-			lastupdate: new Date().getTime(),
-			pending: true,
-		}
-		
-		// Retrieve community from API.
-		jQuery.getJSON('https://api.twitch.tv/kraken/communities/' + id + '?callback=?', {
-			api_version: 5,
-			client_id: twitchClientId
-		}, function(data) {
-			communities[id] = {
-				logo: data.avatar_image_url,
-				name: data.display_name,
-				url: 'https://www.twitch.tv/communities/' + data.name,
-				desc: data.summary,
-				lastupdate: new Date().getTime(),
-				pending: false,
-			};
-			updateDocument();
-		}).fail(function(jqxhr) {
-			if (--tries > 0) {
-				setTimeout(function() {
-					getTwitchCommunity(id, tries);
-				}, 3000);
-			} else {
-				// Remove community stub.
-				delete communities[id];
-			}
-		})
 	}
 	
 	function getTwitchTeam(id, tries) {
@@ -667,10 +590,6 @@ $(function() {
 		}
 	}
 	
-	function getCommunityFallback() {
-		return 'https://static-cdn.jtvnw.net/twitch-community-images-production/defaults/avatar.png';
-	}
-	
 	function getTeamFallback() {
 		return 'img/team.png';
 	}
@@ -767,35 +686,7 @@ $(function() {
 					}
 					desc = desc.replace(url_regex, "<a href=\"$1\" target=\"_blank\">$&</a>");
 					
-					var communityA = [];
 					var teamA = '';
-					
-					// Add community.
-					for (var k = 0; k < stream.community.length; k++) {
-						if (communities[stream.community[k]] && !communities[stream.community[k]].pending) {
-							var community = communities[stream.community[k]];
-							
-							communityA.push($('<a/>', {
-								href: community.url,
-								target: '_blank',
-								title: community.desc
-							}).append(
-								$('<img/>', {
-									src: community.logo || getCommunityFallback(),
-									width: 12,
-									height: 16
-								}).error(function() {
-									if ($(this).attr('src') != getCommunityFallback()) {
-										$(this).attr('src', getCommunityFallback());
-									}
-								}),
-								$('<span/>').css({
-									'font-size': 'smaller',
-									'font-weight': 'bold'
-								}).html(' ' + community.name)
-							).css('margin', '0 8px 0 0'));
-						}
-					}
 					
 					// Add team.
 					if (stream.team && teams[stream.team] && !teams[stream.team].pending) {
@@ -823,8 +714,6 @@ $(function() {
 					}
 					
 					var descIcons = $('<div/>').append(
-						communityA,
-						' ',
 						teamA
 					);
 					if (descIcons.html().trim().length > 0) {
