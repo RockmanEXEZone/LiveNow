@@ -8,7 +8,7 @@ $(function() {
 	}
 	
 	// Stream objects are passed around in the code below. These are the properties:
-	//     stream.platform = 'Twitch', 'Smashcast', 'Picarto', 'Mixer'
+	//     stream.platform = 'Twitch', 'Smashcast', 'Picarto'
 	//     stream.name = name of the streamer
 	//     stream.game = name of game
 	//     stream.desc = stream status/description
@@ -36,10 +36,6 @@ $(function() {
 				// let me just go ahead and borrow this real quick
 				url += '?key=03e26294-b793-11e5-9a41-005056984bd4';
 				params = {};
-				break;
-			case 'Mixer':
-				url = 'https://mixer.com/api/v1/types/' + params.type + '/channels';
-				delete params.type;
 				break;
 		}
 		
@@ -182,13 +178,6 @@ $(function() {
 					channel: game.keys[platform][key]
 				};
 				break;
-			case 'Mixer':
-				pars = {
-					type: game.keys[platform][key],
-					limit: pagesize,
-					page: page
-				};
-				break;
 		}
 		
 		// Make the API request.
@@ -214,9 +203,6 @@ $(function() {
 				case 'PicartoUser':
 					streams = extractPicartoStreams(data, game);
 					break;
-				case 'Mixer':
-					streams = extractMixerStreams(data, game);
-					break;
 			}
 			streams = filterStreams(platform, streams, game)
 			ondata(streams);
@@ -234,9 +220,6 @@ $(function() {
 					break;
 				case 'PicartoUser':
 					more = false;
-					break;
-				case 'Mixer':
-					more = data.length >= pagesize;
 					break;
 			}
 			
@@ -355,32 +338,6 @@ $(function() {
 				viewers: stream.current_viewers,
 				team: null,
 			});
-		}
-		return results;
-	}
-	
-	function extractMixerStreams(data, game) {
-		var results = [];
-		if (data) {
-			for (var i = 0; i < data.length; i++) {
-				var stream = data[i];
-				
-				if (!stream.online) {
-					continue;
-				}
-				
-				results.push({
-					platform: 'Mixer',
-					logo: stream.user.avatarUrl || 'https://mixer.com/_latest/assets/images/main/avatars/default.png',
-					name: stream.user.username || stream.token,
-					thumb: 'https://thumbs.mixer.com/channel/' + stream.id + '.small.jpg',
-					game: game.name,
-					url: 'https://mixer.com/' + stream.token,
-					desc: stream.name,
-					viewers: stream.viewersCurrent,
-					team: null,
-				});
-			}
 		}
 		return results;
 	}
@@ -566,8 +523,6 @@ $(function() {
 		switch (platform) {
 			case 'Twitch':
 				return 'https://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_50x50.png';
-			case 'Mixer':
-				return 'https://mixer.com/_latest/assets/images/main/avatars/default.png';
 			case 'Smashcast':
 				return 'https://static.smashcast.tv/img/a475be4e5aac80811eff1a34ec04aeba.png';
 			default:
@@ -583,8 +538,6 @@ $(function() {
 				return 'https://static.smashcast.tv/img/32f025c7cca2c0fb4d80988ad8908f43.png';
 			case 'Picarto':
 				return 'https://picarto.tv/images/missingthump.jpg';
-			case 'Mixer':
-				return 'https://mixer.com/_latest/assets/images/browse/thumbnail.jpg';
 			default:
 				return '';
 		}
