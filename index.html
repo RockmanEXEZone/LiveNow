@@ -79,7 +79,7 @@
 <div id="main">
 	<div style="float: left; width: 300px; margin-right: 10px; margin-bottom: 1em;">
 		<a href="https://www.therockmanexezone.com/"><img src="img/logo.png" width="300"></a>
-		<h1 style="margin: 0;">Live Now 2.12 <em style="font-style: italic; font-size: 50%; display: none;">Beta</em></h1>
+		<h1 style="margin: 0;">Live Now 2.13 <em style="font-style: italic; font-size: 50%; display: none;">Beta</em></h1>
 		<p style="margin: 0;">Checks for active Twitch and Smashcast streams of the Battle Network, Star Force and Boktai games.</p>
 		<p>The overview to the right automatically updates as long as you keep this tab open. <strong style="color: #EEE;">Therefore, avoid opening Live Now in more than one tab, and avoid refreshing constantly.</strong></p>
 		<p>If your browser supports desktop notifications, you can get notified whenever a stream goes live. Also, if you pin this tab, it will start flashing when someone goes live or offline.</p>
@@ -266,27 +266,45 @@
 					{ name: "Tri Wing",										boxart: 'box/triwing.png' },	// 25
 					{ name: "One Step From Eden",							boxart: 'box/osfe.png' },		// 26
 					{ name: "EndCycle VS",									boxart: 'box/endcyclevs.png' },	// 27
+					{ name: "Rockman EXE Battle Chip Stadium",				boxart: 'box/bcs.png' },		// 28
+					{ name: "Rockman EXE The Medal Operation",				boxart: 'box/tmo.png' },		// 29
+					{ name: "Hero.EXE",										boxart: 'box/hero.png' },		// 30
 				]);
 				
-				// Initialize Mega Man Star Force streams.
+				// Initialize Mega Man Battle Network streams.
 				if (cookies.mmbn !== 'false') {
 					$('.stream-toggle-mmbn').css({ backgroundPositionX: '0px', visibility: 'visible' });
 					
 					// Initialize Twitch queue.
 					LiveNow.initQueue("Twitch", [
-						{ id: 0 }, // 7542
+						{ id: 0,	key: "Mega Man Battle Network" }, // 7542
 						{ id: 1,	key: "Rockman EXE Operate Shooting Star" }, // 24465
-						{ id: 2 }, // 4682
-						{ id: 3 }, // 12105
-						{ id: 4 }, // 3108
-						{ id: 5,	key: "Rockman EXE 4.5 Real Operation" }, // 10763
-						{ id: 6 }, // 11522
-						{ id: 7 }, // 9009
-						{ id: 8 }, // 7325
-						{ id: 9 }, // 17587
-						{ id: 10 }, // 5831
-						{ id: 11 }, // 22528
+						{ id: 2,	key: "Mega Man Battle Network 2" }, // 4682
+						{ id: 3,	key: "Mega Man Battle Network 3" }, // 12105
+						{ id: 3,	key: "Mega Man Battle Network 3 Blue & White" }, // 544992838
+						{ id: 3,	key: "Mega Man Battle Network 3 Blue" }, // 1388250717
+						{ id: 3,	key: "Mega Man Battle Network 3 White" }, // 1550736308
+						{ id: 4,	key: "Mega Man Battle Network 4" }, // 3108
+						{ id: 4,	key: "Mega Man Battle Network 4 Red Sun" }, // 115596254
+						{ id: 4,	key: "Mega Man Battle Network 4 Blue Moon" }, // 581486297
+						{ id: 4,	key: "Mega Man Battle Network 4 Red Sun & Blue Moon" }, // 1206553196
+						{ id: 5,	key: "Mega Man Battle Network 4.5: Real Operation" }, // 10763
+						{ id: 6,	key: "Mega Man Battle Network 5" }, // 11522
+						{ id: 6,	key: "Mega Man Battle Network 5: Team Colonel" }, // 324568485
+						{ id: 6,	key: "Mega Man Battle Network 5: Team Colonel & Protoman" }, // 1465689050
+						{ id: 6,	key: "Mega Man Battle Network 5: Team Protoman" }, // 1984284718
+						{ id: 6,	key: "Mega Man Battle Network 5: Double Team" }, // 9009
+						{ id: 6,	key: "Mega Man Battle Network 5: Double Team DS" }, // 2020525577
+						{ id: 8,	key: "Mega Man Battle Network 6" }, // 7325
+						{ id: 8,	key: "Mega Man Battle Network 6: Cybeast Falzar" }, // 740052011
+						{ id: 8,	key: "Mega Man Battle Network 6: Cybeast Gregar" }, // 1565051033
+						{ id: 9,	key: "Mega Man Battle Chip Challenge" }, // 17587
+						{ id: 9,	key: "RockMan EXE N1 Battle" }, // 861766602
+						{ id: 10,	key: "Mega Man Network Transmission" }, // 5831
+						{ id: 11,	key: "Rockman EXE WS" }, // 22528
 						{ id: 15,	key: "Mega Man Battle Network Chrono X" }, // 416185
+						{ id: 28,	key: "Rockman EXE Battle Chip Stadium" }, // 457859481
+						{ id: 29,	key: "Rockman EXE The Medal Operation" }, // 113768894
 					]);
 					
 					// Initialize Smashcast queue.
@@ -298,7 +316,7 @@
 						{ id: 4,	key: 4021 },
 						{ id: 5,	key: 10393 },
 						{ id: 6,	key: 10999 },
-						{ id: 7,	key: 8916 },
+						{ id: 6,	key: 8916 },
 						{ id: 8,	key: 7535 },
 						{ id: 9,	key: 15975 },
 						{ id: 10,	key: 51447 },
@@ -311,9 +329,13 @@
 					
 					// Initialize Twitch queue.
 					LiveNow.initQueue("Twitch", [
-						{ id: 12 }, // 1350
-						{ id: 13 }, // 18770
-						{ id: 14 }, // 19495
+						{ id: 12,	key: "Mega Man Star Force: Leo" }, // 1350
+						{ id: 12,	key: "Mega Man Star Force: Dragon" }, // 1155000360
+						{ id: 12,	key: "Mega Man Star Force: Pegasus" }, // 1808999901
+						{ id: 13,	key: "Mega Man Star Force 2: Zerker x Ninja" }, // 18770
+						{ id: 13,	key: "Mega Man Star Force 2: Zerker x Saurian" }, // 210749169
+						{ id: 14,	key: "Mega Man Star Force 3: Red Joker" }, // 19495
+						{ id: 14,	key: "Mega Man Star Force 3: Black Ace" }, // 71553216
 					]);
 
 					// Initialize Smashcast queue.
@@ -330,10 +352,12 @@
 					
 					// Initialize Twitch queue.
 					LiveNow.initQueue("Twitch", [
-						{ id: 17 }, // 6523
-						{ id: 18 }, // 13353
-						{ id: 19,	key: "Shin Bokura no Taiyou Gyakushuu no Sabata" }, // 10704
-						{ id: 20 }, // 6457
+						{ id: 17,	key: "Boktai: The Sun Is in Your Hand" }, // 6523
+						{ id: 18,	key: "Boktai 2: Solar Boy Django" }, // 13353
+						{ id: 19,	key: "Shin Bokura no Taiyou: Gyakushuu no Sabata" }, // 10704
+						{ id: 19,	key: "Boktai 3: Sabata's Counterattack" }, // 1109003893
+						{ id: 20,	key: "Lunar Knights" }, // 6457
+						{ id: 21,	key: "Kura5: Bonds of the Undying" }, // 204164098
 					]);
 					
 					// Initialize TwitchUser queue.
@@ -356,9 +380,10 @@
 					// Initialize Twitch queue.
 					LiveNow.initQueue("Twitch", [
 						{ id: 24,	key: "EndCycle" }, // 495507
-						{ id: 25 }, // 503958
+						{ id: 25,	key: "Tri Wing" }, // 503958
 						{ id: 26,	key: "One Step from Eden" }, // 509642
 						{ id: 27,	key: "EndCycle VS" }, // 511509
+						{ id: 30,	key: "Hero.EXE" }, // 122583310
 					]);
 				}
 			});
