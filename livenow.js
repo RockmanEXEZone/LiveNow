@@ -1,7 +1,7 @@
 $(function() {
 	var windowTitle = document.title;
 	
-	var url_regex = /(?:\s|^)((https?:\/\/)?([^\s#\.\/?&=%'"]+\.)([^\s:#\.\/?&=%_'"]*[^\s:#\.\/\-?&=%_'"]\.)*(?!exe|batc?h?|avi|mp(3|4|e?g)|jpe?g|png|gif|bmp|tiff?|psd|cmd?|bin|du?mp)([^\d\s:#\.\/?&=%\-_'"]{2,})(:[0-9]{0,5})?(\/[^\s:#\/?&=%'"]+)*\/?(#[^\s:#\/?&=%'"]*)?\??[^\s:\/?&=%'"]*=?([^\s:#\/?&='"]+)?(&[^\s:#\/?&=%'"]*=?[^\s:#\/?&='"]*)*\/?)/ig;
+	var url_regex = /(?:(https?:)\/\/)?(?:[\w\-.~%+]+@)?([\w\-.~%+]+\.(?!exe|batc?h?|avi|mp(3|4|e?g)|mkv|wav|flac|jpe?g|png|gif|bmp|tiff?|psd|cmd?|bin|du?mp)[\w\-.~%+]+(:\d+)?(?:\/[\w\-.~%+@]+)*\/?(?:\?[\w\-.~%!$&'*+,;=:@]*)?(#[\w\-\.\~%!$&'*+,;=:@]*)?)/ig;
 	
 	function addCommas(number) {
 		return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -637,7 +637,7 @@ $(function() {
 					if (typeof desc === 'undefined') {
 						desc = '';
 					}
-					desc = desc.replace(url_regex, "<a href=\"$1\" target=\"_blank\">$&</a>");
+					desc = desc.replace(url_regex, "<a href=\"https://$2\" target=\"_blank\">$&</a>");
 					
 					var teamA = '';
 					
