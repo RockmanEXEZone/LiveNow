@@ -79,8 +79,8 @@
 <div id="main">
 	<div style="float: left; width: 300px; margin-right: 10px; margin-bottom: 1em;">
 		<a href="https://www.therockmanexezone.com/"><img src="img/logo.png" width="300"></a>
-		<h1 style="margin: 0;">Live Now 2.13 <em style="font-style: italic; font-size: 50%; display: none;">Beta</em></h1>
-		<p style="margin: 0;">Checks for active Twitch and Smashcast streams of the Battle Network, Star Force and Boktai games.</p>
+		<h1 style="margin: 0;">Live Now 2.14 <em style="font-style: italic; font-size: 50%; display: none;">Beta</em></h1>
+		<p style="margin: 0;">Checks for active Twitch streams of the Battle Network, Star Force and Boktai games.</p>
 		<p>The overview to the right automatically updates as long as you keep this tab open. <strong style="color: #EEE;">Therefore, avoid opening Live Now in more than one tab, and avoid refreshing constantly.</strong></p>
 		<p>If your browser supports desktop notifications, you can get notified whenever a stream goes live. Also, if you pin this tab, it will start flashing when someone goes live or offline.</p>
 		<p>To exclude your stream from showing up in Live Now, include the tag [notrez] (TREZ Live Now only) or [nolivenow] (all Live Now instances) in your stream title.</p>
@@ -307,21 +307,6 @@
 						{ id: 28,	key: "Rockman EXE Battle Chip Stadium" }, // 457859481
 						{ id: 29,	key: "Rockman EXE The Medal Operation" }, // 113768894
 					]);
-					
-					// Initialize Smashcast queue.
-					LiveNow.initQueue("Smashcast", [
-						{ id: 0,	key: 7705 },
-						{ id: 1,	key: 21710 },
-						{ id: 2,	key: 5312 },
-						{ id: 3,	key: 11480 },
-						{ id: 4,	key: 4021 },
-						{ id: 5,	key: 10393 },
-						{ id: 6,	key: 10999 },
-						{ id: 6,	key: 8916 },
-						{ id: 8,	key: 7535 },
-						{ id: 9,	key: 15975 },
-						{ id: 10,	key: 51447 },
-					]);
 				}
 				
 				// Initialize Mega Man Star Force streams.
@@ -338,13 +323,6 @@
 						{ id: 14,	key: "Mega Man Star Force 3: Red Joker" }, // 19495
 						{ id: 14,	key: "Mega Man Star Force 3: Black Ace" }, // 71553216
 						{ id: 31,	key: "Ryūsei no Rockman: Denpa Henkan! On Air!" }, // 172137957
-					]);
-
-					// Initialize Smashcast queue.
-					LiveNow.initQueue("Smashcast", [
-						{ id: 12,	key: 2567 },
-						{ id: 13,	key: 16953 },
-						{ id: 14,	key: 17652 },
 					]);
 				}
 				
@@ -365,14 +343,6 @@
 					// Initialize TwitchUser queue.
 					LiveNow.initQueue("TwitchUser", [
 						{ id: 21,	key: "135253217", filter: /Kura\s*5|Boktai\s*3D/i },	// CatsFromMars
-					]);
-					
-					// Initialize Smashcast queue.
-					LiveNow.initQueue("Smashcast", [
-						{ id: 17,	key: 6876 },
-						{ id: 18,	key: 12502 },
-						{ id: 19,	key: 10350 },
-						{ id: 20,	key: 6818 },
 					]);
 				}
 				

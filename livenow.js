@@ -8,7 +8,7 @@ $(function() {
 	}
 	
 	// Stream objects are passed around in the code below. These are the properties:
-	//     stream.platform = 'Twitch', 'Smashcast', 'Picarto'
+	//     stream.platform = 'Twitch', 'Picarto'
 	//     stream.name = name of the streamer
 	//     stream.game = name of game
 	//     stream.desc = stream status/description
@@ -28,9 +28,6 @@ $(function() {
 			case 'TwitchUser':
 				url = 'https://api.twitch.tv/kraken/streams?api_version=5&client_id=' + twitchClientId + '&callback=?';
 				break;
-			case 'Smashcast':
-				url = 'https://api.smashcast.tv/media/live/list';
-				break;
 			case 'PicartoUser':
 				url = 'https://ptvappapi.picarto.tv/channel/' + params.channel;
 				// let me just go ahead and borrow this real quick
@@ -43,13 +40,7 @@ $(function() {
 		jQuery.getJSON(url, params, function(data) {
 			onsuccess(data);
 		}).fail(function(jqxhr) {
-			// Smashcast exception.
-			if (jqxhr.status === 404 && platform === 'Smashcast' && jqxhr.responseJSON
-				&& jqxhr.responseJSON.error_msg === 'no_media_found') {
-				onsuccess(jqxhr.responseText);
-			} else {
-				onerror();
-			}
+			onerror();
 		});
 	}
 
@@ -165,14 +156,6 @@ $(function() {
 					offset: page * pagesize
 				};
 				break;
-			case 'Smashcast':
-				pars = {
-					game: game.keys[platform][key],
-					limit: pagesize,
-					start: page * pagesize,
-					fast: true
-				};
-				break;
 			case 'PicartoUser':
 				pars = {
 					channel: game.keys[platform][key]
@@ -182,12 +165,6 @@ $(function() {
 		
 		// Make the API request.
 		getApi(platform, pars, function(data) {
-			// Check Smashcast empty return value.
-			if (platform === 'Smashcast' && data.error_msg === 'no_media_found') {
-				onend();
-				return;
-			}
-			
 			// Pass received streams.
 			var streams = [];
 			switch (platform) {
@@ -196,9 +173,6 @@ $(function() {
 					break;
 				case 'TwitchUser':
 					streams = extractTwitchStreams(data, game, false);
-					break;
-				case 'Smashcast':
-					streams = extractSmashcastStreams(data, game);
 					break;
 				case 'PicartoUser':
 					streams = extractPicartoStreams(data, game);
@@ -214,9 +188,6 @@ $(function() {
 				case 'Twitch':
 				case 'TwitchUser':
 					more = page * pagesize < data._total;
-					break;
-				case 'Smashcast':
-					more = (data.livestream ? true : false) && data.livestream.length === pagesize;
 					break;
 				case 'PicartoUser':
 					more = false;
@@ -294,28 +265,6 @@ $(function() {
 					desc: stream.channel.status,
 					viewers: stream.viewers,
 					team: stream.channel._id,
-				});
-			}
-		}
-		return results;
-	}
-
-	function extractSmashcastStreams(data, game) {
-		var results = [];
-		if (data.livestream) {
-			for (var i = 0; i < data.livestream.length; i++) {
-				var stream = data.livestream[i];
-				
-				results.push({
-					platform: 'Smashcast',
-					logo: 'https://edge.sf.hitbox.tv' + stream.channel.user_logo_small,
-					name: stream.media_display_name,
-					thumb: 'https://edge.sf.hitbox.tv' + stream.media_thumbnail,
-					game: game.name,
-					url: 'https://www.smashcast.tv/' + stream.media_name,
-					desc: stream.media_status,
-					viewers: stream.media_views,
-					team: null,
 				});
 			}
 		}
@@ -523,8 +472,6 @@ $(function() {
 		switch (platform) {
 			case 'Twitch':
 				return 'https://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_50x50.png';
-			case 'Smashcast':
-				return 'https://static.smashcast.tv/img/a475be4e5aac80811eff1a34ec04aeba.png';
 			default:
 				return '';
 		}
@@ -534,8 +481,6 @@ $(function() {
 		switch (platform) {
 			case 'Twitch':
 				return 'https://static-cdn.jtvnw.net/ttv-static/404_preview-80x50.jpg';
-			case 'Smashcast':
-				return 'https://static.smashcast.tv/img/32f025c7cca2c0fb4d80988ad8908f43.png';
 			case 'Picarto':
 				return 'https://picarto.tv/images/missingthump.jpg';
 			default:
