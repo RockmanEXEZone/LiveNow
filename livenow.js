@@ -1,7 +1,7 @@
 $(function() {
 	var windowTitle = document.title;
 	
-	var url_regex = /(?:(https?:)\/\/)?(?:[\w\-.~%+]+@)?([\w\-.~%+]+\.(?!exe|batc?h?|avi|mp(3|4|e?g)|mkv|wav|flac|jpe?g|png|gif|bmp|tiff?|psd|cmd?|bin|du?mp)[\w\-.~%+]+(:\d+)?(?:\/[\w\-.~%+@]+)*\/?(?:\?[\w\-.~%!$&'*+,;=:@]*)?(#[\w\-\.\~%!$&'*+,;=:@]*)?)/ig;
+	var url_regex = /(?<=^|\s)(?:https?:\/\/)?((?:[\w\-~%]+\.)+(?!exe|batc?h?|avi|mp(?:3|4|e?g)|mkv|wav|flac|jpe?g|png|gif|bmp|tiff?|psd|cmd?|bin|du?mp|txt|web[pm])[\w\-~%]+(?:\/[\w\-~%]+)*\/?(?:\?[\w\-~%]+=[\w\-~%]+(?:&[\w\-~%]+(?:=[\w\-~%]*)*)*)?(?:#[\w\-~%]*)?(?=\s|$))/ig;
 	
 	function addCommas(number) {
 		return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
