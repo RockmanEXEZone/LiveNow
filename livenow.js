@@ -64,8 +64,7 @@ $(function() {
 			// Decay all current streams for current game and platform.
 			for (var i = 0; i < currentStreams.length; i++) {
 				// Check if stream has the same platform and game.
-				if (platform.substr(0, currentStreams[i].platform.length) == currentStreams[i].platform
-						&& currentStreams[i].game == game.name) {
+				if (platform == currentStreams[i].platform && currentStreams[i].game == game.name) {
 					currentStreams[i].decay--;
 				}
 			}
